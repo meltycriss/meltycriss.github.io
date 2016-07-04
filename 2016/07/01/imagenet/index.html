@@ -90,7 +90,7 @@
 <meta property="og:url" content="http://yoursite.com/2016/07/01/imagenet/index.html">
 <meta property="og:site_name" content="陪你度过漫长岁月">
 <meta property="og:description" content="AlexNet介绍，包括其架构，如何加快收敛，怎样加强泛化能力以及如何评估模型">
-<meta property="og:updated_time" content="2016-07-01T11:30:38.620Z">
+<meta property="og:updated_time" content="2016-07-04T11:26:02.170Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="论文笔记《ImageNet Classification with Deep Convolutional Neural Networks》">
 <meta name="twitter:description" content="AlexNet介绍，包括其架构，如何加快收敛，怎样加强泛化能力以及如何评估模型">
@@ -312,7 +312,7 @@
 <li><strong>ReLU Nonlinearity</strong><ul>
 <li><strong>目的：</strong> 加快收敛速度</li>
 <li><strong>手段：</strong> 使用Rectified Linear Units(ReLUs)作为神经元。即采用$$f(x) = max(0, x)$$作为激活函数</li>
-<li><strong>原理：</strong> 一般使用的激活函数$$f(x) = tanh(x) \ f(x) = \frac{1}{1 + e^{-x} }$$具有饱和(saturating)的特性，即导数在越接近目标的时候越小<a href="http://zhangliliang.com/2014/07/01/paper-note-alexnet-nips2012/" target="_blank" rel="external">(原理参考)</a>。当使用梯度下降的方法时，步长由学习率以及导数决定，导数太小会导致步长太小，收敛会慢。ReLU对于大于0部分导数恒为1，所以能加快收敛。</li>
+<li><strong>原理：</strong> 一般使用的激活函数$$f(x) = tanh(x) \\ f(x) = \frac{1}{1 + e^{-x} }$$具有饱和(saturating)的特性，即导数在越接近目标的时候越小<a href="http://zhangliliang.com/2014/07/01/paper-note-alexnet-nips2012/" target="_blank" rel="external">(原理参考)</a>。当使用梯度下降的方法时，步长由学习率以及导数决定，导数太小会导致步长太小，收敛会慢。ReLU对于大于0部分导数恒为1，所以能加快收敛。</li>
 </ul>
 </li>
 </ol>
@@ -396,6 +396,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2016/07/04/caffe_1_layer/" rel="prev" title="Caffe学习：自定义数据读取">
+                Caffe学习：自定义数据读取 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -466,7 +470,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">2</span>
+              <span class="site-state-item-count">3</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -474,7 +478,7 @@
           
             <div class="site-state-item site-state-categories">
               
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">分类</span>
               
             </div>
@@ -483,7 +487,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
