@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="caffe配置," />
+  <meta name="keywords" content="rcnn," />
 
 
 
@@ -84,16 +84,16 @@
 
 
 
-<meta name="description" content="Ubuntu 16.04配置Caffe环境">
+<meta name="description" content="用于完成object detection的RCNN">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Ubuntu 16.04配置Caffe环境">
-<meta property="og:url" content="http://yoursite.com/2016/06/28/caffe-configuration/index.html">
+<meta property="og:title" content="论文笔记《Rich feature hierarchies for accurate object detection and semantic segmentation》">
+<meta property="og:url" content="http://yoursite.com/2016/07/08/paper_rcnn/index.html">
 <meta property="og:site_name" content="陪你度过漫长岁月">
-<meta property="og:description" content="Ubuntu 16.04配置Caffe环境">
-<meta property="og:updated_time" content="2016-07-01T11:32:00.756Z">
+<meta property="og:description" content="用于完成object detection的RCNN">
+<meta property="og:updated_time" content="2016-07-08T07:47:43.857Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Ubuntu 16.04配置Caffe环境">
-<meta name="twitter:description" content="Ubuntu 16.04配置Caffe环境">
+<meta name="twitter:title" content="论文笔记《Rich feature hierarchies for accurate object detection and semantic segmentation》">
+<meta name="twitter:description" content="用于完成object detection的RCNN">
 
 
 
@@ -114,9 +114,9 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/06/28/caffe-configuration/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/07/08/paper_rcnn/"/>
 
-  <title> Ubuntu 16.04配置Caffe环境 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title> 论文笔记《Rich feature hierarchies for accurate object detection and semantic segmentation》 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -236,7 +236,7 @@
             
             
               
-                Ubuntu 16.04配置Caffe环境
+                论文笔记《Rich feature hierarchies for accurate object detection and semantic segmentation》
               
             
           </h1>
@@ -248,8 +248,8 @@
               <i class="fa fa-calendar-o"></i>
             </span>
             <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-06-28T19:21:42+08:00" content="2016-06-28">
-              2016-06-28
+            <time itemprop="dateCreated" datetime="2016-07-08T15:45:08+08:00" content="2016-07-08">
+              2016-07-08
             </time>
           </span>
 
@@ -262,8 +262,8 @@
               <span class="post-meta-item-text">分类于</span>
               
                 <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/环境配置/" itemprop="url" rel="index">
-                    <span itemprop="name">环境配置</span>
+                  <a href="/categories/论文笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">论文笔记</span>
                   </a>
                 </span>
 
@@ -278,8 +278,8 @@
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/06/28/caffe-configuration/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/06/28/caffe-configuration/" itemprop="commentsCount"></span>
+                <a href="/2016/07/08/paper_rcnn/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/07/08/paper_rcnn/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -307,55 +307,67 @@
       
 
       
-        <h2 id="基本配置流程"><a href="#基本配置流程" class="headerlink" title="基本配置流程"></a>基本配置流程</h2><ol>
-<li><p>从官网克隆到本地 <a href="https://github.com/BVLC/caffe" target="_blank" rel="external">caffe官网</a></p>
-<blockquote>
-<p>git clone git@github.com:BVLC/caffe.git</p>
-</blockquote>
+        <h2 id="任务简介"><a href="#任务简介" class="headerlink" title="任务简介"></a>任务简介</h2><ul>
+<li><strong>目标：</strong>object detection</li>
+<li><strong>输入：</strong>图片</li>
+<li><strong>输出：</strong>框住前景物体<strong>（有可能多种且每种有多个）</strong>，并且给物体标上类别</li>
+</ul>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><ol>
+<li><strong>分解成两个子任务</strong><ul>
+<li>localization </li>
+<li>classification</li>
+</ul>
 </li>
-<li><p>按照官方教程安装 <a href="http://caffe.berkeleyvision.org/installation.html" target="_blank" rel="external">官方安装教程</a> </p>
-<ol>
-<li><p>配置依赖文件 <a href="http://caffe.berkeleyvision.org/install_apt.html" target="_blank" rel="external">依赖文件</a></p>
-<blockquote>
-<p>sudo apt-get install libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev protobuf-compiler<br>sudo apt-get install –no-install-recommends libboost-all-dev<br>sudo apt-get install libatlas-base-dev<br>sudo apt-get install libgflags-dev libgoogle-glog-dev liblmdb-dev</p>
-</blockquote>
-</li>
-<li><p>编译(<strong>默认含GPU，可以用-j4多核加速编译</strong>) <a href="http://caffe.berkeleyvision.org/installation.html#compilation" target="_blank" rel="external">编译</a></p>
-<blockquote>
-<p>cp Makefile.config.example Makefile.config<br>make all<br>make test<br>make runtest</p>
-</blockquote>
-</li>
+<li><strong>localization：</strong>枚举</li>
+<li><strong>classification：</strong>CNN</li>
+<li>最后再<strong>筛掉</strong>多余的</li>
 </ol>
-</li>
+<h2 id="实现流程"><a href="#实现流程" class="headerlink" title="实现流程"></a>实现流程</h2><ol>
+<li><strong>localization：</strong>用selective search提取region proposals（即一个个候选框）</li>
+<li><strong>warped region：</strong>为了适配CNN输入，将region proposals格式归一化</li>
+<li><strong>feature extraction：</strong>CNN</li>
+<li><strong>classification：</strong>对于每个类别训练一个二分类SVM</li>
+<li><strong>综合策略：</strong>NMS(non-maximum suppression)，重叠的选最有信心的</li>
 </ol>
-<h2 id="踩过的坑"><a href="#踩过的坑" class="headerlink" title="踩过的坑"></a>踩过的坑</h2><ul>
-<li><p><strong>can’t find hdf5.h when build caffe</strong>: 用以下sh改变include路径 <a href="https://github.com/NVIDIA/DIGITS/issues/156" target="_blank" rel="external">source</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line"># manipulate header path, before building caffe on debian jessie</span><br><span class="line"># usage:</span><br><span class="line"># 1. cd root of caffe</span><br><span class="line"># 2. bash &lt;this_script&gt;</span><br><span class="line"># 3. build</span><br><span class="line"></span><br><span class="line"># transformations :</span><br><span class="line">#  #include &quot;hdf5/serial/hdf5.h&quot; -&gt; #include &quot;hdf5/serial/hdf5.h&quot;</span><br><span class="line">#  #include &quot;hdf5_hl.h&quot; -&gt; #include &quot;hdf5/serial/hdf5_hl.h&quot;</span><br><span class="line"></span><br><span class="line">find . -type f -exec sed -i -e &apos;s^&quot;hdf5.h&quot;^&quot;hdf5/serial/hdf5.h&quot;^g&apos; -e &apos;s^&quot;hdf5_hl.h&quot;^&quot;hdf5/serial/hdf5_hl.h&quot;^g&apos; &apos;&#123;&#125;&apos; \;</span><br></pre></td></tr></table></figure>
+<h2 id="实现细节"><a href="#实现细节" class="headerlink" title="实现细节"></a>实现细节</h2><ul>
+<li><strong>pre-training：</strong>直接用ILSVRC 2012训练CNN</li>
+<li><strong>fine-tuning：</strong>将pre-training训练出来的CNN换上匹配当前任务的输入层（warped region）和分类层（1000-way to 21-way）来训练模型<ul>
+<li><strong>训练集：</strong>warped region的label根据其与GT(Ground Truth)的IoU(Intersection-over-Union，交集/并集)的大小来定。这里将threshold设为0.5</li>
+</ul>
 </li>
-<li><p><strong>/usr/bin/ld: cannot find -lhdf5_hl</strong>: 修改文件名字 <a href="https://github.com/NVIDIA/DIGITS/issues/156" target="_blank" rel="external">source</a>  </p>
-<blockquote>
-<p>cd /usr/lib/x86_64-linux-gnu<br>sudo ln -s libhdf5_serial.so.10.1.0 libhdf5.so<br>sudo ln -s libhdf5_serial_hl.so.10.0.2 libhdf5_hl.so</p>
-</blockquote>
-</li>
-<li><p><strong>‘memcpy’ was not declared in this scope</strong>: 修改Makefile.config <a href="https://github.com/BVLC/caffe/issues/4046" target="_blank" rel="external">source</a></p>
-<blockquote>
-<p>将Makefile.config中的<br>NVCCFLAGS += -ccbin=$(CXX) -Xcompiler -fPIC $(COMMON_FLAGS)<br>修改为<br>NVCCFLAGS += -D_FORCE_INLINES -ccbin=$(CXX) -Xcompiler -fPIC $(COMMON_FLAGS)  </p>
-</blockquote>
-</li>
-<li><p><strong>安装Cuda</strong>:  Cuda官网只有给出14.04和15.04的Cuda7.5版本，但实际上可以直接通过apt-get获取16.04的Cuda7.5</p>
-<ol>
-<li>安装cuda<blockquote>
-<p>sudo apt-get install nvidia-cuda-toolkit</p>
-</blockquote>
-</li>
-<li>修改caffe/Makefile.config中的CUDA_DIR</li>
-</ol>
+<li><strong>classifier：</strong>将fine-tuning训练出来的模型换上SVM作为分类层<ul>
+<li><strong>训练集：</strong>方法同fine-tuning的训练集，不过这里的threshold设为0.3</li>
+</ul>
 </li>
 </ul>
-<ul>
-<li><strong>安装显卡驱动</strong>: 系统设置-软件和更新-附加驱动，选择最新的显卡驱动，应用。<ul>
-<li>安装驱动后屏幕无法调节亮度的解决办法 <a href="http://askubuntu.com/questions/76081/brightness-not-working-after-installing-nvidia-driver" target="_blank" rel="external">调节亮度</a></li>
-<li>使用<code>nvidia-setttings</code>查看gpu使用情况</li>
+<h2 id="Visualization"><a href="#Visualization" class="headerlink" title="Visualization"></a>Visualization</h2><ul>
+<li><strong>学习：</strong>定义某个unit学习的内容为<strong>让这个unit输出最高的input</strong>，即给定一堆input，unit对某个input_0的输出最高，则认为这个unit识别的就是这个input_0。通过这个定义可以将各个unit学习什么输出出来</li>
+</ul>
+<h2 id="Ablation-studies（切除）（用于验证有效性）"><a href="#Ablation-studies（切除）（用于验证有效性）" class="headerlink" title="Ablation studies（切除）（用于验证有效性）"></a>Ablation studies（切除）（用于验证有效性）</h2><ul>
+<li><strong>ablation：</strong>比较要不要某一个层，对于结果的影响</li>
+<li><strong>结果：</strong><ul>
+<li>在不进行fine-tuning的情况下，CNN中的全连接层并没有什么卵用</li>
+<li>在进行fine-tuning的情况下，提升很大</li>
+</ul>
+</li>
+</ul>
+<h2 id="Detection-error-analysis"><a href="#Detection-error-analysis" class="headerlink" title="Detection error analysis"></a>Detection error analysis</h2><ul>
+<li><strong>量化误差：</strong>给出了percentage of each type - total false positives图，说明了在各个FP时的误差类型分布。错误类型有以下<ul>
+<li>框错位置</li>
+<li>分成相似的类</li>
+<li>分成不相似的类</li>
+<li>分成背景</li>
+</ul>
+</li>
+<li><strong>结果：</strong>RCNN的错误基本都是框错了位置，作者认为这时因为<strong>bottom-up region proposals</strong>还有<strong>positional invariance learned from pre-training CNN</strong>导致的</li>
+<li><strong>解决方案：</strong>对于生成的框，要使用<strong>BB(Bounding box regression)</strong>进行进一步调整</li>
+</ul>
+<h2 id="收获"><a href="#收获" class="headerlink" title="收获"></a>收获</h2><ul>
+<li>object detection的任务</li>
+<li>RCNN</li>
+<li>评价模型的指标<ul>
+<li>定性：visualization</li>
+<li>定量：Ablation, detection error</li>
 </ul>
 </li>
 </ul>
@@ -380,7 +392,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/caffe配置/" rel="tag">#caffe配置</a>
+            <a href="/tags/rcnn/" rel="tag">#rcnn</a>
           
         </div>
       
@@ -389,13 +401,13 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2016/07/07/mindmap-jingjin/" rel="next" title="思维导图《精进》">
+                <i class="fa fa-chevron-left"></i> 思维导图《精进》
+              </a>
+            
           </div>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/07/01/imagenet/" rel="prev" title="论文笔记《ImageNet Classification with Deep Convolutional Neural Networks》">
-                论文笔记《ImageNet Classification with Deep Convolutional Neural Networks》 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -421,8 +433,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/06/28/caffe-configuration/"
-           data-title="Ubuntu 16.04配置Caffe环境" data-url="http://yoursite.com/2016/06/28/caffe-configuration/">
+      <div class="ds-thread" data-thread-key="2016/07/08/paper_rcnn/"
+           data-title="论文笔记《Rich feature hierarchies for accurate object detection and semantic segmentation》" data-url="http://yoursite.com/2016/07/08/paper_rcnn/">
       </div>
     
   </div>
@@ -513,7 +525,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本配置流程"><span class="nav-number">1.</span> <span class="nav-text">基本配置流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#踩过的坑"><span class="nav-number">2.</span> <span class="nav-text">踩过的坑</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#任务简介"><span class="nav-number">1.</span> <span class="nav-text">任务简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思路"><span class="nav-number">2.</span> <span class="nav-text">思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现流程"><span class="nav-number">3.</span> <span class="nav-text">实现流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现细节"><span class="nav-number">4.</span> <span class="nav-text">实现细节</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Visualization"><span class="nav-number">5.</span> <span class="nav-text">Visualization</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Ablation-studies（切除）（用于验证有效性）"><span class="nav-number">6.</span> <span class="nav-text">Ablation studies（切除）（用于验证有效性）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Detection-error-analysis"><span class="nav-number">7.</span> <span class="nav-text">Detection error analysis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#收获"><span class="nav-number">8.</span> <span class="nav-text">收获</span></a></li></ol></div>
             
           </div>
         </section>
