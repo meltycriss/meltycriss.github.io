@@ -1,0 +1,761 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="s2vt_captioner," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="s2vt_captioner.py源码阅读，是LSTM进行test的python脚本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Caffe学习：s2vt_captioner.py源码阅读">
+<meta property="og:url" content="http://yoursite.com/2016/08/17/caffe_5_s2vt_captioner/index.html">
+<meta property="og:site_name" content="陪你度过漫长岁月">
+<meta property="og:description" content="s2vt_captioner.py源码阅读，是LSTM进行test的python脚本">
+<meta property="og:updated_time" content="2016-08-17T08:17:28.083Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Caffe学习：s2vt_captioner.py源码阅读">
+<meta name="twitter:description" content="s2vt_captioner.py源码阅读，是LSTM进行test的python脚本">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/08/17/caffe_5_s2vt_captioner/"/>
+
+  <title> Caffe学习：s2vt_captioner.py源码阅读 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">陪你度过漫长岁月</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Caffe学习：s2vt_captioner.py源码阅读
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-08-17T16:15:14+08:00" content="2016-08-17">
+              2016-08-17
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/caffe/" itemprop="url" rel="index">
+                    <span itemprop="name">caffe</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/08/17/caffe_5_s2vt_captioner/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/08/17/caffe_5_s2vt_captioner/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o">本文总阅读量</i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>s2vt_captioner.py是使用之前训练出来的s2vt model进行caption的脚本。整体逻辑跟训练的时候差不多，但还是有一些区别，比如</p>
+<ul>
+<li>decode时候LSTM2的x不再是gt，而是上一个unit生成的单词</li>
+<li>使用了python的接口调用caffe</li>
+</ul>
+<p>下面按照脚本的核心函数调用链来展开。</p>
+<h2 id="核心函数调用链"><a href="#核心函数调用链" class="headerlink" title="核心函数调用链"></a>核心函数调用链</h2><ul>
+<li><strong>main:</strong> 划分为vid chunks<ul>
+<li><strong>run_pred_iters:</strong> 划分为一个个vid<ul>
+<li><strong>encode_video_frames:</strong> 使用vid的feats进行encode</li>
+<li><strong>run_pred_iter:</strong> decode一个vid，返回captions（有可能多个）<ul>
+<li><strong>predict_image_caption:</strong> 根据caption策略选择对应的caption方式<ul>
+<li><strong>predict_image_caption_beam_search:</strong> 使用beam search的方式进行caption<ul>
+<li><strong>predict_single_word:</strong> 生成下一个单词</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="main"><a href="#main" class="headerlink" title="main"></a>main</h2><p>将任务划分为一个个chunk，交给run_pred_iters完成任务</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fsg = fc7FrameSequenceGenerator(filenames, BUFFER_SIZE,</span><br><span class="line">      vocab_file, max_words=MAX_WORDS, align=aligned, shuffle=<span class="keyword">False</span>,</span><br><span class="line">      pad=aligned, truncate=aligned)</span><br><span class="line">video_gt_pairs = all_video_gt_pairs(fsg)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>video_gt_pairs:</strong> dict{vid: list[gt_sents]}<ul>
+<li>假若没有给gt的话，list[gt_sents]为空</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">outputs = run_pred_iters(lstm_net, chunk, video_gt_pairs,</span><br><span class="line">              fsg, strategies=STRATEGIES, display_vocab=vocab_list)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>outputs:</strong> dict{vid: output_batch}<ul>
+<li>每个vid有可能有多于一个caption，所以是output_batch</li>
+</ul>
+</li>
+<li><strong>output_batch:</strong> list[dict{caption, prob, gt, source}]<ul>
+<li><strong>caption:</strong> 预测的句子，list[word1, word2, word3, …]</li>
+<li><strong>prob:</strong> 句子各单词发生的概率，list[prob_word1, prob_word2, prob_word3, …]</li>
+<li><strong>source:</strong> 搜索句子的策略 e.g. sample / beam</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">text_out_types = to_text_output(outputs, vocab_list)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>text_output_types:</strong> dict{source_type: list[output string]}<ul>
+<li><strong>source_type:</strong> 搜索句子的策略 e.g. sample / beam</li>
+</ul>
+</li>
+</ul>
+<h2 id="run-pred-iters"><a href="#run-pred-iters" class="headerlink" title="run_pred_iters"></a>run_pred_iters</h2><p>将chunk进一步划分为一个个vid，交给run_pre_iter完成任务</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># get fc7 feature for the video</span></span><br><span class="line">video_features = video_to_descriptor(video_id, fsg)</span><br></pre></td></tr></table></figure>
+<p>video_features: list[1 * FEAT_DIM]</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># run lstm on all the frames of video before predicting</span></span><br><span class="line">encode_video_frames(pred_net, video_features)</span><br><span class="line">outputs[video_id] = \</span><br><span class="line">    run_pred_iter(pred_net, pad_img_feature, display_vocab, strategies=strategies)</span><br></pre></td></tr></table></figure>
+<p>caption的流程：</p>
+<ol>
+<li>将frame_feats encode到LSTM</li>
+<li>从encode好的LSTM中decode出caption</li>
+</ol>
+<h2 id="encode-video-frames"><a href="#encode-video-frames" class="headerlink" title="encode_video_frames"></a>encode_video_frames</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">net.forward(frames_fc7=image_features, cont_sentence=cont, input_sentence=data_en,</span><br><span class="line">   stage_indicator=stage_ind)</span><br></pre></td></tr></table></figure>
+<p>将数据格式匹配输入，将frame_feats依次传入LSTM，并设置input_sentence为0</p>
+<h2 id="run-pred-iter"><a href="#run-pred-iter" class="headerlink" title="run_pred_iter"></a>run_pred_iter</h2><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">captions, probs = predict_image_caption(net, pad_image_feature, vocab_list, strategy=strategy)</span><br></pre></td></tr></table></figure>
+<p>对每种strategy都调用predict_image_caption来进行caption</p>
+<h2 id="predict-image-caption"><a href="#predict-image-caption" class="headerlink" title="predict_image_caption"></a>predict_image_caption</h2><p>根据strategy选择对应的image_caption函数进行caption</p>
+<h2 id="predict-image-caption-beam-search"><a href="#predict-image-caption-beam-search" class="headerlink" title="predict_image_caption_beam_search"></a>predict_image_caption_beam_search</h2><p>使用beam_search的方式生成句子。所谓的beam_search实际上为启发式的BFS，使用了贪心的思想：即每次搜索完下一层后，只在下一层中取beam_size个结点进一步展开，而其余的结点则不要</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">beam_size = <span class="number">1</span>	<span class="comment">#每层保留结点数</span></span><br><span class="line">beams = [[]]	<span class="comment">#beams: list[sentence], sentence: list[word]</span></span><br><span class="line">beams_complete = <span class="number">0</span>	<span class="comment">#当前层有多少beam时已经eos了</span></span><br><span class="line">beam_probs = [[]]	<span class="comment">#粒度为单词，对应beams中每个单词出现的概率</span></span><br><span class="line">beam_log_probs = [<span class="number">0.</span>]	<span class="comment">#粒度为beam(i.e. 句子)，对应beams中每个beam出现的概率(log w1*w2*w3...)</span></span><br><span class="line">current_input_word = <span class="number">0</span>  <span class="comment"># first input is EOS</span></span><br><span class="line"><span class="keyword">while</span> beams_complete &lt; len(beams):</span><br><span class="line">  <span class="comment"># expansions: append a new word to current beams</span></span><br><span class="line">  expansions = []	<span class="comment">#记录了下一层单词的信息</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">#每一个单词的信息如下</span></span><br><span class="line">    <span class="comment"># extension : the new word</span></span><br><span class="line">    exp = &#123;<span class="string">'prefix_beam_index'</span>: beam_index, <span class="string">'extension'</span>: [ind],</span><br><span class="line">           <span class="string">'prob_extension'</span>: [prob], <span class="string">'log_prob'</span>: extended_beam_log_prob&#125;</span><br><span class="line">    expansions.append(exp)</span><br><span class="line"></span><br><span class="line">    <span class="comment">#prefix_beam_index: 这个单词是由哪条beam生成出来的</span></span><br><span class="line">    <span class="comment">#extension: 这个单词在字典中的index</span></span><br><span class="line">    <span class="comment">#prob_extension: 产生的是这个单词的概率</span></span><br><span class="line">    <span class="comment">#log_prob: 加上这个单词后，beam的概率log w1*w2*w3...*w_extension</span></span><br></pre></td></tr></table></figure>
+<p>了解了数据结构后，先看内层循环</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#       0       p_w1, p_w2...  w1, w2...</span></span><br><span class="line"><span class="keyword">for</span> beam_index, beam_log_prob, beam <span class="keyword">in</span> \</span><br><span class="line">    zip(range(len(beams)), beam_log_probs, beams):</span><br><span class="line">  <span class="keyword">if</span> beam:</span><br><span class="line">    previous_word = beam[<span class="number">-1</span>]</span><br><span class="line">    <span class="keyword">if</span> len(beam) &gt;= max_length <span class="keyword">or</span> previous_word == <span class="number">0</span>:</span><br><span class="line">      exp = &#123;<span class="string">'prefix_beam_index'</span>: beam_index, <span class="string">'extension'</span>: [],</span><br><span class="line">             <span class="string">'prob_extension'</span>: [], <span class="string">'log_prob'</span>: beam_log_prob&#125;</span><br><span class="line">      expansions.append(exp)</span><br><span class="line">      <span class="comment"># Don't expand this beam; it was already ended with an EOS,</span></span><br><span class="line">      <span class="comment"># or is the max length.</span></span><br><span class="line">      <span class="keyword">continue</span></span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    previous_word = <span class="number">0</span>  <span class="comment"># EOS is first word</span></span><br><span class="line">  <span class="keyword">if</span> beam_size == <span class="number">1</span>:</span><br><span class="line">    probs = predict_single_word(net, pad_img_feature, previous_word)</span><br><span class="line">  <span class="keyword">else</span>:</span><br><span class="line">    probs = predict_single_word_from_all_previous(net, pad_img_feature, beam)</span><br><span class="line">  <span class="keyword">assert</span> len(probs.shape) == <span class="number">1</span></span><br><span class="line">  <span class="keyword">assert</span> probs.shape[<span class="number">0</span>] == len(vocab_list)</span><br><span class="line">  <span class="comment"># index of top beam_size prob words</span></span><br><span class="line">  expansion_inds = probs.argsort()[-beam_size:]</span><br><span class="line">  <span class="keyword">for</span> ind <span class="keyword">in</span> expansion_inds:</span><br><span class="line">    prob = probs[ind]</span><br><span class="line">    extended_beam_log_prob = beam_log_prob + math.log(prob)</span><br><span class="line">    <span class="comment"># extension : the new word</span></span><br><span class="line">    exp = &#123;<span class="string">'prefix_beam_index'</span>: beam_index, <span class="string">'extension'</span>: [ind],</span><br><span class="line">           <span class="string">'prob_extension'</span>: [prob], <span class="string">'log_prob'</span>: extended_beam_log_prob&#125;</span><br><span class="line">    expansions.append(exp)</span><br></pre></td></tr></table></figure>
+<p>将每条beam生成的单词中，概率最高的beam_size个单词保存到expansions中。内层循环结束后，expansions中含有len(beams) * beam_size个单词的信息。接下来看外层循环</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> beams_complete &lt; len(beams):</span><br><span class="line">  <span class="comment"># expansions: append a new word to current beams</span></span><br><span class="line">  expansions = []</span><br><span class="line"></span><br><span class="line">	<span class="comment">#内层循环</span></span><br><span class="line"></span><br><span class="line">  <span class="comment"># Sort expansions in decreasing order of probabilitf.</span></span><br><span class="line">  expansions.sort(key=<span class="keyword">lambda</span> expansion: <span class="number">-1</span> * expansion[<span class="string">'log_prob'</span>])</span><br><span class="line">  <span class="comment"># only reserve beam_size number of node in each BFS layer</span></span><br><span class="line">  expansions = expansions[:beam_size]</span><br><span class="line">  new_beams = \</span><br><span class="line">      [beams[e[<span class="string">'prefix_beam_index'</span>]] + e[<span class="string">'extension'</span>] <span class="keyword">for</span> e <span class="keyword">in</span> expansions]</span><br><span class="line">  new_beam_probs = \</span><br><span class="line">      [beam_probs[e[<span class="string">'prefix_beam_index'</span>]] + e[<span class="string">'prob_extension'</span>] <span class="keyword">for</span> e <span class="keyword">in</span> expansions]</span><br><span class="line">  beam_log_probs = [e[<span class="string">'log_prob'</span>] <span class="keyword">for</span> e <span class="keyword">in</span> expansions]</span><br><span class="line">  beams_complete = <span class="number">0</span></span><br><span class="line">  <span class="keyword">for</span> beam <span class="keyword">in</span> new_beams:</span><br><span class="line">    <span class="keyword">if</span> beam[<span class="number">-1</span>] == <span class="number">0</span> <span class="keyword">or</span> len(beam) &gt;= max_length: beams_complete += <span class="number">1</span></span><br><span class="line">  beams, beam_probs = new_beams, new_beam_probs</span><br></pre></td></tr></table></figure>
+<p>保留expansions中概率最高的beam_size个单词，并用这bean_size个单词扩展beams，得到size为beam_size的new_beams。一直循环，直到beams中所有beam都结束</p>
+<h2 id="predict-single-word"><a href="#predict-single-word" class="headerlink" title="predict_single_word"></a>predict_single_word</h2><p>同理encode_video_frame，不过这里以pad作为frames_fc7的输入</p>
+<h2 id="关于caffemodel参数不匹配的问题"><a href="#关于caffemodel参数不匹配的问题" class="headerlink" title="关于caffemodel参数不匹配的问题"></a>关于caffemodel参数不匹配的问题</h2><p>可以看到</p>
+<ul>
+<li>在使用s2vt_captioner.py进行<strong>test</strong>的时候，网络的模型是<strong>没有展开的</strong>，然后通过将每次的output作为下次的input来传递c和h</li>
+<li>然而，在<strong>train</strong>的时候，可以看到网络的模型是将LSTM<strong>展开的</strong></li>
+<li>显然，展开的LSTM的参数会比不展开的<strong>参数要多得多</strong></li>
+<li>那为什么还能用<strong>train出来的caffemodel给test用呢？</strong></li>
+</ul>
+<p>原因就在于，train的时候，展开的各部分实际上是share同一份参数的。而实现参数共享的trick就在我一开始想不明白有什么用的<code>add_param()-&gt;set_name()</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//lstm_layer.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Add layer to transform all timesteps of x to the hidden state dimension.</span></span><br><span class="line"><span class="comment">//     W_xc_x = W_xc * x + b_c</span></span><br><span class="line"><span class="comment">//&#123;</span></span><br><span class="line"><span class="comment">//  LayerParameter* x_transform_param = net_param-&gt;add_layer();</span></span><br><span class="line"><span class="comment">//  x_transform_param-&gt;CopyFrom(biased_hidden_param);</span></span><br><span class="line"><span class="comment">//  x_transform_param-&gt;set_name("x_transform");</span></span><br><span class="line">  x_transform_param-&gt;add_param()-&gt;set_name(<span class="string">"W_xc"</span>);</span><br><span class="line">  x_transform_param-&gt;add_param()-&gt;set_name(<span class="string">"b_c"</span>);</span><br><span class="line"><span class="comment">//  x_transform_param-&gt;add_bottom("x");</span></span><br><span class="line"><span class="comment">//  x_transform_param-&gt;add_top("W_xc_x");</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Add layer to compute</span></span><br><span class="line"><span class="comment">//     W_hc_h_&#123;t-1&#125; := W_hc * h_conted_&#123;t-1&#125;</span></span><br><span class="line"><span class="comment">//&#123;</span></span><br><span class="line"><span class="comment">//  LayerParameter* w_param = net_param-&gt;add_layer();</span></span><br><span class="line"><span class="comment">//  w_param-&gt;CopyFrom(hidden_param);</span></span><br><span class="line"><span class="comment">//  w_param-&gt;set_name("transform_" + ts);</span></span><br><span class="line">  w_param-&gt;add_param()-&gt;set_name(<span class="string">"W_hc"</span>);</span><br><span class="line"><span class="comment">//  w_param-&gt;add_bottom("h_conted_" + tm1s);</span></span><br><span class="line"><span class="comment">//  w_param-&gt;add_top("W_hc_h_" + tm1s);</span></span><br><span class="line"><span class="comment">//  w_param-&gt;mutable_inner_product_param()-&gt;set_axis(2);</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br></pre></td></tr></table></figure>
+<p>再从caffe.proto中看这个param参数的含义</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//caffe.proto</span><br><span class="line"></span><br><span class="line">message LayerParameter &#123;</span><br><span class="line">  // Specifies training parameters (multipliers on global learning constants,</span><br><span class="line">  // and the name and other settings used for weight sharing).</span><br><span class="line">  repeated ParamSpec param = 6;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以说，所有参数都是共享同一份的</p>
+<h2 id="收获"><a href="#收获" class="headerlink" title="收获"></a>收获</h2><ul>
+<li>在脚本迭代更新，备份上一份脚本时，<strong>备份命名要有意义</strong>，不要只加个.bak就算了，回去一个周末就忘记了.bak1, .bak2, .bak3是哪个跟哪个了</li>
+<li>debug的时候还需要考虑<strong>环境变量</strong>，比如PYTHONPATH这种，特别是两份相同的代码在两台机子上跑出不一样的结果</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/s2vt-captioner/" rel="tag">#s2vt_captioner</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/08/05/caffe_4_lstm/" rel="next" title="Caffe学习：LSTM源码阅读">
+                <i class="fa fa-chevron-left"></i> Caffe学习：LSTM源码阅读
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/08/29/mindmap-goutongdeyishu/" rel="prev" title="思维导图《沟通的艺术》">
+                思维导图《沟通的艺术》 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/08/17/caffe_5_s2vt_captioner/"
+           data-title="Caffe学习：s2vt_captioner.py源码阅读" data-url="http://yoursite.com/2016/08/17/caffe_5_s2vt_captioner/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Criss" />
+          <p class="site-author-name" itemprop="name">Criss</p>
+          <p class="site-description motion-element" itemprop="description">Talk is cheap</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">11</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#核心函数调用链"><span class="nav-number">2.</span> <span class="nav-text">核心函数调用链</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#main"><span class="nav-number">3.</span> <span class="nav-text">main</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#run-pred-iters"><span class="nav-number">4.</span> <span class="nav-text">run_pred_iters</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#encode-video-frames"><span class="nav-number">5.</span> <span class="nav-text">encode_video_frames</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#run-pred-iter"><span class="nav-number">6.</span> <span class="nav-text">run_pred_iter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#predict-image-caption"><span class="nav-number">7.</span> <span class="nav-text">predict_image_caption</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#predict-image-caption-beam-search"><span class="nav-number">8.</span> <span class="nav-text">predict_image_caption_beam_search</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#predict-single-word"><span class="nav-number">9.</span> <span class="nav-text">predict_single_word</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于caffemodel参数不匹配的问题"><span class="nav-number">10.</span> <span class="nav-text">关于caffemodel参数不匹配的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#收获"><span class="nav-number">11.</span> <span class="nav-text">收获</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Criss</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="http://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user">本站访客数</i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span>人次</span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye">本站总访问量</i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span>次</span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"meltycriss"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+
+  
+  
+  
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+  </script>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for (i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+  </script>
+  <script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+
+
+  
+
+  
+
+</body>
+</html>
