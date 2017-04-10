@@ -73,3 +73,5 @@ deploy:
   branch: master
 
 #duoshuo_shortname: meltycriss
+
+disqus_shortname: meltycriss
