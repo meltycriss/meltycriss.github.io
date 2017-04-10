@@ -72,4 +72,4 @@ deploy:
   repo: https://github.com/meltycriss/meltycriss.github.io.git
   branch: master
 
-duoshuo_shortname: meltycriss
+#duoshuo_shortname: meltycriss
