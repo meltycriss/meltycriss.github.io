@@ -32,8 +32,7 @@ R &   & r'  \\\
 S & s & s'  \\\
 A & a & a'
 \end{array}
-	$$
-	当我们要更新q(s, a)时，sarsa与q-learning有相同的$s, a, r', s'$，但他们的$a'$并不相同，也正是$a'$的不同导致了不同的q(s, a)含义：
+	$$当我们要更新q(s, a)时，sarsa与q-learning有相同的$s, a, r', s'$，但他们的$a'$并不相同，也正是$a'$的不同导致了不同的q(s, a)含义：
 		- sarsa通过对q($s'$, $A$)进行$\epsilon \text{-greedy}$得到$a'$，因此sarsa的q(s, a)表示$\epsilon \text{-greedy}$下的q-value；
 		- q-learning则通过$a'=\text{argmax}_A q(s', A)$得到$a'$，因此q-learning的q(s, a)表示greedy（deterministic）下的q-value。  
 	+ 也就是说，在sarsa中，q(s, a)表示的是behavior policy的q-value；而q-learning中，q(s, a)表示的是另外一个policy的q-value。前者这种q(s, a)与behavior policy一致的就称为On-Policy，后者这种不一致的就称为Off-Policy。即划分On-Policy与Off-Policy的依据是**q(s, a)对应的policy是不是behavior policy**。更准确来说，假设更新$Q^{\pi}(s, a)$时，所用的样本$s, a \sim \pi '$，那么划分On-Policy与Off-Policy的依据是$\pi '$是否为$\pi$（因此experience replay基本都为Off-Policy，因为q(s, a)对应当前policy，而用到的sample来自experience replay，因此属于以前的policy）。
@@ -54,14 +53,12 @@ A & a & a'
 	+ 实际上我们可以直接对policy建模并求解最优policy。设policy为$\pi(a \mid s ; \boldsymbol\theta)$（e.g., 高斯分布$a \sim \mathcal{N}(\phi(s)^T \boldsymbol\theta, \sigma ^2)$），则最优policy（i.e., $\boldsymbol\theta$）为以下优化问题的解：
 	$$
 	\boldsymbol\theta = \mathop{\text{argmax}}\limits_{\boldsymbol\theta} v_{\pi_{\boldsymbol\theta}}(s_0),
-	$$
-	此处我们假设每次的初始状态都为$s_0$。
+	$$此处我们假设每次的初始状态都为$s_0$。
 	+ 假如知道$\nabla v_{\pi_{\boldsymbol\theta}}(s_0)$，那么我们就可以使用迭代的方法（e.g., SGD）去求解上述优化问题。
 	+ 而Policy Gradient Theorem告诉我们
 	$$
 	\nabla v_{\pi_{\boldsymbol\theta}}(s_0)=\mathbb{E}_{S_t, A_t \sim \pi}\left[\gamma ^t G_t \frac{\nabla _\boldsymbol\theta \pi (A_t \mid S_t, \boldsymbol\theta)}{\pi(A_t \mid S_t, \boldsymbol\theta)} \right],
-	$$
-	因此我们可以通过sample来估计$\nabla v_{\pi_{\boldsymbol\theta}}(s_0)$从而求解优化问题，得到最优policy。
+	$$因此我们可以通过sample来估计$\nabla v_{\pi_{\boldsymbol\theta}}(s_0)$从而求解优化问题，得到最优policy。
 - more
 	+ [不同于Sutton's book的另一种policy gradient推导方式](https://danieltakeshi.github.io/2017/03/28/going-deeper-into-reinforcement-learning-fundamentals-of-policy-gradients/)：
 		- 分析baseline对bias与variance的影响：
