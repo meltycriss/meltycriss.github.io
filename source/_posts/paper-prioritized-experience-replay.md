@@ -24,7 +24,7 @@ naive的experience replay在取transition时采用的策略是均匀采样，对
 作者还做了个实验，来说明transition的选取顺序对学习效率有很大的影响。下图横轴代表experience replay的大小，纵轴表示学习所需的更新次数。黑色的线表示采用均匀采样得到的结果，绿色的线表示每次都选取”最好“的transition的结果。可以看到，这个效率提升是很明显的。
 
 <div style="width:800px; margin-left:auto; margin-right:auto;" >
-  {% asset_img fig.png 选取顺序对学习效率的影响 %}
+  {% asset_img fig.png transition选取顺序对学习效率的影响 %}
 </div>
 
 于是很自然的就会有一个想法，能不能通过**优先学习那些“信息量”比较大的transition**来提高学习效率呢？
