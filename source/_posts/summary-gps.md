@@ -197,7 +197,7 @@ $$
 		5. 将$\tau^\*$和$\theta^\*$代入Lagrangian函数，得到$g(\lambda) = \mathcal{L}(\tau^\*, \theta^\*, \lambda)$。
 		6. 对$\lambda$做单步gradient ascent（跟求解$\theta^\*$时一样，由于约束条件跟优化变量无关，所以等价于无约束优化），更新$\lambda$，迭代。
 
-### Next iteration
+## Next iteration
 
 回到第一步collect data，即用新的controller跟environment交互，迭代。
 
