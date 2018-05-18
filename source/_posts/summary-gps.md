@@ -20,13 +20,21 @@ description:
 4. Deterministic policy case：从相对简单的deterministic policy case开始介绍*GPS*的**具体流程**；
 5. Stochastic policy case：从deterministic policy case过渡到stochastic policy case，介绍**完整**的*GPS*算法。
 
+---
+
 # Motivation
+
+下面通过将*GPS*跟不同类型的算法进行比较来说明*GPS*的特点。
 
 - 与Model-Free算法相比：由于*GPS*对环境建立了模型（i.e., model/dynamics），在计算q value时，不仅仅是“记录”，还能进行“推算”，因此**sample efficiency会比较高，收敛速度会比较快**；
 - 与其他Model-Based算法相比：在test的时候，部分Model-Based算法需要进行online optimization（i.e., 根据当前拟合的模型，使用某种优化算法，得到当前的action）；而由于*GPS*最终得到的是一个parametric policy（e.g., 神经网络），因此**在test的时候会比较快**（无需做online optimization，只需要做一次forward pass）；
 - 与简单的Imitation Learning算法相比：在简单的IL中，teacher单方面地给student传授知识（i.e., supervised learning），而不管student的学习能力如何；而在*GPS*中，**除了teacher给student传授知识以外，student还会给teacher反馈**，要求teacher适配student的学习能力，形成闭环，因此train的效果会更好。
 
+---
+
 # Problem Formulation
+
+下面对我们所讨论的问题做一个界定。
 
 - setting
 	- **fixed time length** task（e.g, 完成任务的时长限定在20s内，决策的频率是20Hz，则总步长$T$为400）
@@ -40,7 +48,11 @@ description:
 		- deterministic case：$u_t = \pi_\theta(x_t)$
 		- stochastic case：$\pi_\theta(u_t \vert x_t) \sim \mathcal{N}(\mu_t, \Sigma_t)$
 
+---
+
 # Framework
+
+下面介绍*GPS*的整体框架。
 
 1. collect data：通过controller与environment进行交互，收集数据；
 <div style="width:300px; margin-left:auto; margin-right:auto;" >
@@ -59,7 +71,11 @@ description:
   {% asset_img 4.png  %}
 </div>
 
+---
+
 # Deterministic policy case
+
+下面开始介绍Deterministic policy case下*GPS*的具体流程。
 
 ## Collect data
 
@@ -97,6 +113,9 @@ $$
 			- quadratic cost（$C_t, c_t$）
 		- output：$K_t, k_t$
 		- optimal control（上述轨迹优化问题的解）：$u_t=K_tx_t+k_t$，$x_{t+1}=f(x_t, u_t)$
+<div style="width:500px; margin-left:auto; margin-right:auto;" >
+  {% asset_img lqr.png  %}
+</div>
 	- 由于我们在fit dynamics中拟合的就是一个linear model，因此只要我们设置的cost function是quadratic的话就可以使用*LQR*来求解。
 	- 即使我们的cost function不是quadratic，也还可以使用*iterative LQR(iLQR)*来进行求解。*iLQR*可以求解nonlinear dynamics，nonquadratic cost下的轨迹优化问题，它的核心思想是对dynamics和cost分别进行linear及quadratic展开，然后用*LQR*进行求解。
 
@@ -189,6 +208,8 @@ $$
 - 为什么称之为*GPS*：guided主要体现在最后优化问题的约束$u_t = \pi_\theta(x_t)$，相当于有一个teacher（controller）在“指引”我们的policy。
 - collect data使用controller还是policy：应该是使用controller，因为policy仅仅拟合了某些具体的$(x_t, u_t)$，而controller对各个$x_t$都是“最优”的。
 - 为什么流程图中，train policy部分会跟$\tau_i$相关：这是因为在求解$\theta^\*$时，$\tau^\*$还没代入Lagrangian函数，也就是说Lagrangian函数中用的是$\tau$而不是$\tau^\*$。
+
+---
 
 # Stochastic policy case
 
@@ -326,9 +347,13 @@ $$
 		$$应该可以使用诸如*SGD*等优化方法进行求解，于是我们得到$\theta^\*$
 		3. 对$\begin{bmatrix} \lambda \\\\ \eta \end{bmatrix}$做单步gradient ascent，迭代。
 
+---
+
 # Conclusion
 
 至此已经介绍完*GPS*的流程，这个算法给我印象最深刻的地方就是**化归**的思想，即将新构建的问题转化为之前已经知道解决方法的问题，令人叹为观止。
+
+---
 
 # References
 
