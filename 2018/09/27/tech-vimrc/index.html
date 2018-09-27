@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="学习方法," />
+  <meta name="keywords" content="Vim," />
 
 
 
@@ -84,18 +84,16 @@
 
 
 
-<meta name="description" content="关于学习方法的一门课程">
+<meta name="description" content="关于配置Vim的一些技术总结">
 <meta property="og:type" content="article">
-<meta property="og:title" content="课程笔记《Learning How to Learn》">
-<meta property="og:url" content="http://yoursite.com/2017/09/09/note-learning-how-to-learn/index.html">
+<meta property="og:title" content="技术总结《配置Vim》">
+<meta property="og:url" content="http://yoursite.com/2018/09/27/tech-vimrc/index.html">
 <meta property="og:site_name" content="陪你度过漫长岁月">
-<meta property="og:description" content="关于学习方法的一门课程">
-<meta property="og:image" content="http://yoursite.com/2017/09/09/note-learning-how-to-learn/learning_how_to_learn.png">
-<meta property="og:updated_time" content="2018-05-16T02:14:50.137Z">
+<meta property="og:description" content="关于配置Vim的一些技术总结">
+<meta property="og:updated_time" content="2018-09-27T11:05:22.182Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="课程笔记《Learning How to Learn》">
-<meta name="twitter:description" content="关于学习方法的一门课程">
-<meta name="twitter:image" content="http://yoursite.com/2017/09/09/note-learning-how-to-learn/learning_how_to_learn.png">
+<meta name="twitter:title" content="技术总结《配置Vim》">
+<meta name="twitter:description" content="关于配置Vim的一些技术总结">
 
 
 
@@ -123,13 +121,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/09/09/note-learning-how-to-learn/"/>
+  <link rel="canonical" href="http://yoursite.com/2018/09/27/tech-vimrc/"/>
 
 
 
 
 
-  <title> 课程笔记《Learning How to Learn》 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title> 技术总结《配置Vim》 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -242,7 +240,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/note-learning-how-to-learn/">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/09/27/tech-vimrc/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Criss">
@@ -266,7 +264,7 @@
             
             
               
-                课程笔记《Learning How to Learn》
+                技术总结《配置Vim》
               
             
           </h1>
@@ -281,8 +279,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-09T15:16:28+08:00">
-                2017-09-09
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-09-27T11:15:27+08:00">
+                2018-09-27
               </time>
             
 
@@ -304,8 +302,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/课程笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">课程笔记</span>
+                  <a href="/categories/技术总结/" itemprop="url" rel="index">
+                    <span itemprop="name">技术总结</span>
                   </a>
                 </span>
 
@@ -322,8 +320,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/09/09/note-learning-how-to-learn/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/09/09/note-learning-how-to-learn/" itemprop="commentCount"></span>
+                <a href="/2018/09/27/tech-vimrc/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/09/27/tech-vimrc/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -343,7 +341,7 @@
 
           
               <div class="post-description">
-                  关于学习方法的一门课程
+                  关于配置Vim的一些技术总结
               </div>
           
 
@@ -358,10 +356,97 @@
       
 
       
-        <h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h2><div style="width:800px; margin-left:auto; margin-right:auto;"><br>  <img src="/2017/09/09/note-learning-how-to-learn/learning_how_to_learn.png" alt="Learning How to Learn思维导图" title="Learning How to Learn思维导图"><br></div>
-
+        <p>本文主要介绍我自己的Vim配置（Ubuntu 16.04，主要用于写Python和C++）以及管理方案（如何将Vim配置快速部署到新机子上）。接下来首先介绍一款<strong>强大的Vim配置</strong>，然后介绍如何在该Vim配置的基础上<strong>添加更多插件</strong>，最后给出一个Vim配置<strong>管理方案</strong>。</p>
+<h2 id="The-ultimate-Vim-configuration"><a href="#The-ultimate-Vim-configuration" class="headerlink" title="The ultimate Vim configuration"></a>The ultimate Vim configuration</h2><h3 id="核心框架"><a href="#核心框架" class="headerlink" title="核心框架"></a>核心框架</h3><p><a href="https://github.com/amix/vimrc" target="_blank" rel="external">The ultimate Vim configuration</a>是一份强大的Vim配置，它使用了Pathogen作为插件管理器（关于Vim插件管理器的发展可以看<a href="https://www.zhihu.com/question/24294358" target="_blank" rel="external">这里</a>），安装插件只需要<strong>把插件放到对应目录</strong>就好了（一般来说就是<code>git clone</code>）。按照<a href="https://github.com/amix/vimrc#install-for-your-own-user-only" target="_blank" rel="external">指引</a>安装完后，这份Vim配置的<strong>核心目录结构</strong>如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">.vim_runtime</div><div class="line">│</div><div class="line"><span class="comment"># default plugins &amp; configurations</span></div><div class="line">├── sources_forked</div><div class="line">├── sources_non_forked</div><div class="line">├── vimrcs</div><div class="line">│   ├── basic.vim <span class="comment"># general configurations</span></div><div class="line">│   └── plugins_config.vim <span class="comment"># plugin configurations</span></div><div class="line">│</div><div class="line"><span class="comment"># custom plugins &amp; configurations</span></div><div class="line">├── my_plugins</div><div class="line">├── my_configs.vim <span class="comment"># may not exist</span></div><div class="line">│</div><div class="line"><span class="comment"># installer</span></div><div class="line">├── install_awesome_vimrc.sh</div></pre></td></tr></table></figure>
+<p>从以上目录结构可见，<strong>核心框架</strong>包含以下<strong>三部分</strong>：</p>
+<ul>
+<li>自带插件<ul>
+<li><code>sources_forked</code>和<code>sources_non_forked</code>中包含了自带的插件；</li>
+<li><code>vimrcs</code>中的<ul>
+<li><code>basic.vim</code>包含插件无关的通用配置（e.g., 一个tab等于4个空格）；</li>
+<li><code>plugins_config.vim</code>中包含了针对自带插件的配置。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>自定义插件<ul>
+<li><code>my_plugins</code>是安装自定义插件的地方；</li>
+<li><code>my_configs.vim</code>则用于编写针对自定义插件的配置和插件无关的通用配置（值得注意的是，因为<code>my_configs.vim</code>在最后的<code>~/.vimrc</code>中是最后一个被引用的，因此假如它的配置与其他<code>.vim</code>有冲突的话，以<code>my_configs.vim</code>中的配置为准）。</li>
+</ul>
+</li>
+<li>安装脚本<ul>
+<li><code>install_awesome_vimrc.sh</code>包含修改<code>~/.vimrc</code>的代码。</li>
+</ul>
+</li>
+</ul>
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><p>本节主要介绍<strong>自带插件的使用方法</strong>。</p>
+<ul>
+<li>打开/关闭文件<ul>
+<li><code>,nn</code>：在Vim中打开目录树；</li>
+<li><code>,f</code>：查看最近使用过的文件；</li>
+<li><code>:W</code>：以sudo权限保存文件；</li>
+<li><code>gf</code>：当光标在一个路径上时，打开该文件。</li>
+</ul>
+</li>
+<li>编辑<ul>
+<li><code>gcc</code>：注释选中的行；</li>
+<li><code>$123 / $q / $e</code>：为选中的内容添加不同的括号/引号；</li>
+<li><code>Ctrl+s / Ctrl+x / Ctrl+p</code>：多光标（同时选中多个相同的内容，重构的时候很有用）；<ul>
+<li>要实现这个功能，需要进行一些修改，参考<a href="https://github.com/amix/vimrc/issues/340" target="_blank" rel="external">这里</a>。简单来说就是要在<code>~/.bashrc</code>中加上<code>stty -ixon</code>。</li>
+</ul>
+</li>
+<li><code>+ / _</code>：在逻辑意义上扩展/收缩选中的内容（e.g., 变量，函数，类）；<ul>
+<li>要实现这个功能，需要再安装一些插件来告诉Vim怎么在逻辑意义上划分内容。以Python为例（参考<a href="https://github.com/terryma/vim-expand-region/issues/15" target="_blank" rel="external">这里</a>），大概分为以下两步：<ol>
+<li>将<a href="https://github.com/kana/vim-textobj-user" target="_blank" rel="external">vim-textobj-user</a>和<a href="https://github.com/bps/vim-textobj-python" target="_blank" rel="external">vim-textobj-python</a>下载到<code>my_plugins</code>；</li>
+<li>在<code>my_configs.vim</code>中加上以下代码。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">call</span> expand_region#custom_text_objects(<span class="string">'python'</span>, &#123;</div><div class="line">      \ <span class="string">'af'</span> :<span class="number">1</span>,</div><div class="line">      \ <span class="string">'if'</span> :<span class="number">1</span>,</div><div class="line">      \ <span class="string">'ac'</span> :<span class="number">1</span>,</div><div class="line">      \ <span class="string">'ic'</span> :<span class="number">1</span>,</div><div class="line">      \ &#125;)</div></pre></td></tr></table></figure>
+<h2 id="更多插件"><a href="#更多插件" class="headerlink" title="更多插件"></a>更多插件</h2><p>本节介绍如何在<a href="https://github.com/amix/vimrc" target="_blank" rel="external">The ultimate Vim configuration</a>的基础上，安装更多的插件，使Vim用起来更顺手。</p>
+<ul>
+<li><a href="https://github.com/tmhedberg/SimpylFold" target="_blank" rel="external">SimpylFold</a><ul>
+<li>功能：代码折叠插件，方便以不同层级去阅读代码；</li>
+<li>安装：下载到<code>my_plugins</code>文件夹中；</li>
+<li>使用：<code>za / zm / zr</code>。</li>
+</ul>
+</li>
+<li><a href="https://github.com/Valloric/YouCompleteMe" target="_blank" rel="external">YouCompleteMe</a><ul>
+<li>功能：代码补全插件，同时还提供跳转功能（变量/函数的定义），能够大幅提高阅读代码的速度。</li>
+<li>安装：跟<a href="https://github.com/Valloric/YouCompleteMe#linux-64-bit" target="_blank" rel="external">指引</a>，用<code>install.py</code>来装；</li>
+<li>使用（下面仅针对Python，C++还要进一步配置来告诉这个插件编译的flag是什么，参考<a href="https://github.com/Valloric/YouCompleteMe#c-family-semantic-completion" target="_blank" rel="external">这里</a>）<ul>
+<li>自动补全装好就能用；</li>
+<li>代码跳转需要设置一下快捷键，参考<a href="https://github.com/Valloric/YouCompleteMe#ycmcompleter-subcommands" target="_blank" rel="external">这里</a>。简单来说，就是将<code>nnoremap &lt;leader&gt;jd :YcmCompleter GoTo&lt;CR&gt;</code>加到<code>my_configs.vim</code>中，之后就可以通过<code>,jd</code>进行跳转了（跳转后可以用<code>Ctrl+o</code>返回）。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="管理方案"><a href="#管理方案" class="headerlink" title="管理方案"></a>管理方案</h2><p>用Vim的一个很大的motivation是通用性，也就是说在不同的机子上都能够用同一套顺手的IDE，这就对快速部署提出了要求。</p>
+<p>下面介绍我自己的方案，大体来说分为以下步骤：</p>
+<ol>
+<li>将<a href="https://github.com/amix/vimrc" target="_blank" rel="external">The ultimate Vim configuration</a><code>fork</code>到自己的Github上；</li>
+<li>通过<code>git submodule add xxx</code>来安装插件；<ul>
+<li>之所以不用<code>git clone</code>是预防嵌套Git repository无法<code>git push</code>的问题。</li>
+</ul>
+</li>
+<li>每次更新完插件/配置后<code>git push</code>到自己Github；</li>
+<li>在一台新的机子上，用<code>git clone --recursive</code>从自己的Github上下载配置文件<ul>
+<li><code>--recursive</code>表明要把submodule都下载下来</li>
+</ul>
+</li>
+<li>运行<code>install_awesome_vimrc.sh</code>安装Vim配置</li>
+</ol>
 <h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
-<li><a href="https://www.coursera.org/learn/learning-how-to-learn" target="_blank" rel="external">Learning How to Learn</a></li>
+<li><a href="https://devhints.io/vimscript" target="_blank" rel="external">Vim配置文件语法cheatsheet</a></li>
+<li><a href="https://vi.stackexchange.com/questions/8856/mapping-ctrl-with-equal-sign" target="_blank" rel="external">可用的Vim快捷键</a></li>
+<li><a href="https://www.quora.com/How-can-I-compile-and-execute-a-c++-program-directly-from-Vim-in-Ubuntu" target="_blank" rel="external">Vim中编译、运行C++代码</a></li>
+<li><a href="https://blog.github.com/2016-02-01-working-with-submodules/" target="_blank" rel="external">Git submodule</a></li>
 </ul>
 
       
@@ -386,7 +471,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/学习方法/" rel="tag"># 学习方法</a>
+            <a href="/tags/Vim/" rel="tag"># Vim</a>
           
         </div>
       
@@ -395,8 +480,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/09/09/note-linear-algebra/" rel="next" title="课程笔记《MIT18.06线性代数》">
-                <i class="fa fa-chevron-left"></i> 课程笔记《MIT18.06线性代数》
+              <a href="/2018/05/17/summary-gps/" rel="next" title="学习总结《Guided Policy Search》">
+                <i class="fa fa-chevron-left"></i> 学习总结《Guided Policy Search》
               </a>
             
           </div>
@@ -404,10 +489,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/09/09/note-reinforcement-learning/" rel="prev" title="课程笔记《UCL强化学习》">
-                课程笔记《UCL强化学习》 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -537,7 +618,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#思维导图"><span class="nav-number">1.</span> <span class="nav-text">思维导图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">2.</span> <span class="nav-text">References</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#The-ultimate-Vim-configuration"><span class="nav-number">1.</span> <span class="nav-text">The ultimate Vim configuration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#核心框架"><span class="nav-number">1.1.</span> <span class="nav-text">核心框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用方法"><span class="nav-number">1.2.</span> <span class="nav-text">使用方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#更多插件"><span class="nav-number">2.</span> <span class="nav-text">更多插件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#管理方案"><span class="nav-number">3.</span> <span class="nav-text">管理方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">4.</span> <span class="nav-text">References</span></a></li></ol></div>
             
 
           </div>
@@ -678,9 +759,9 @@
 
     <script type="text/javascript">
       var disqus_shortname = 'meltycriss';
-      var disqus_identifier = '2017/09/09/note-learning-how-to-learn/';
+      var disqus_identifier = '2018/09/27/tech-vimrc/';
 
-      var disqus_title = "课程笔记《Learning How to Learn》";
+      var disqus_title = "技术总结《配置Vim》";
 
 
       function run_disqus_script(disqus_script) {
