@@ -1,5 +1,5 @@
 ---
-title: 源码阅读《Pytorch PPO》
+title: 源码阅读《PyTorch PPO》
 date: 2018-10-09 11:56:11
 tags: 
   - pytorch-ppo
