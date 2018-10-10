@@ -165,13 +165,14 @@ def worker(remote, parent_remote, env_fn_wrapper):
 # BASELINE_ROOT/common/vec_env/subproc_vec_env.py
 
 class SubprocVecEnv(VecEnv):
-	...
+    ...
 
-	# 给subprocess发送step指令
+    # 给subprocess发送step指令
     def step_async(self, actions):
         for remote, action in zip(self.remotes, actions):
             remote.send(('step', action))
         self.waiting = True
+
 
     # 接收并拼接subprocess返回的交互信息
     def step_wait(self):
@@ -202,7 +203,7 @@ class VecNormalize(VecEnvWrapper):
         self.ob_rms = RunningMeanStd(shape=self.observation_space.shape) if ob else None
         self.ret_rms = RunningMeanStd(shape=()) if ret else None
 
-	...
+    ...
 
     def step_wait(self):
         obs, rews, news, infos = self.venv.step_wait()
@@ -272,16 +273,16 @@ class Policy(nn.Module):
 # PPO_ROOT/storage.py
 
 class RolloutStorage(object):
-	...
+    ...
 
-	# 保存交互信息
-	# current_obs: o_{t+1}
-	# state: RNN中的hidden state，
-	# action: a_t
-	# action_log_prob: \pi(a_t | o_t)
-	# value_pred: V(o_t)
-	# reward: r_t
-	# mask: 标识o_{t+1}时刻是否通过gym.reset()得到，是的话为0，否的话为1
+    # 保存交互信息
+    # current_obs: o_{t+1}
+    # state: RNN中的hidden state，
+    # action: a_t
+    # action_log_prob: \pi(a_t | o_t)
+    # value_pred: V(o_t)
+    # reward: r_t
+    # mask: 标识o_{t+1}时刻是否通过gym.reset()得到，是的话为0，否的话为1
     def insert(self, current_obs, state, action, action_log_prob, value_pred, reward, mask):
         ...
 
@@ -318,7 +319,7 @@ class PPO(object):
 
     def update(self, rollouts):
     	# \hat{A)_t in PPO paper（return的计算可能用的GAE，也可能用的MC）
-   		# 并且对advantage做normalization
+        # 并且对advantage做normalization
         advantages = rollouts.returns[:-1] - rollouts.value_preds[:-1]
         advantages = (advantages - advantages.mean()) / (
             advantages.std() + 1e-5)
