@@ -20,7 +20,7 @@ categories:
 
 下面先介绍代码的**逻辑框架**，然后再看**具体代码**。具体代码部分以一个类似于**深度优先**的方式展开。
 
-## Logic framework
+## Logical framework
 
 这份代码按照RL的思想，将代码分成了environment和robot（之所以不用agent这个词，主要是为了跟下面的变量名做区分）两大模块。environment部分主要是`envs`这个变量，它通过OpenAI baselines的wrapper实现了多环境并行化。robot部分分为了三个子模块，第一个是parametric policy变量`actor_critic`；第二个是用来保存trajectory的`rollouts`变量；最后一个是用于参数更新的RL algorithm变量`agent`。总结一下，其**逻辑框架**如下:
 
