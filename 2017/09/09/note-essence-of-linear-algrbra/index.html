@@ -1,0 +1,1041 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="线性代数的本质," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="形象、直观地理解线性代数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="课程笔记《线性代数的本质》">
+<meta property="og:url" content="http://yoursite.com/2017/09/09/note-essence-of-linear-algrbra/index.html">
+<meta property="og:site_name" content="陪你度过漫长岁月">
+<meta property="og:description" content="形象、直观地理解线性代数">
+<meta property="og:image" content="http://yoursite.com/2017/09/09/note-essence-of-linear-algrbra/combination.png">
+<meta property="og:image" content="http://yoursite.com/2017/09/09/note-essence-of-linear-algrbra/transformation.png">
+<meta property="og:image" content="http://yoursite.com/2017/09/09/note-essence-of-linear-algrbra/representation.png">
+<meta property="og:image" content="http://yoursite.com/2017/09/09/note-essence-of-linear-algrbra/det.png">
+<meta property="og:image" content="http://yoursite.com/2017/09/09/note-essence-of-linear-algrbra/dot_product_order.png">
+<meta property="og:image" content="http://yoursite.com/2017/09/09/note-essence-of-linear-algrbra/dot_product_projection.png">
+<meta property="og:updated_time" content="2024-08-04T13:35:55.632Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="课程笔记《线性代数的本质》">
+<meta name="twitter:description" content="形象、直观地理解线性代数">
+<meta name="twitter:image" content="http://yoursite.com/2017/09/09/note-essence-of-linear-algrbra/combination.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/09/09/note-essence-of-linear-algrbra/"/>
+
+
+
+
+
+  <title> 课程笔记《线性代数的本质》 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">陪你度过漫长岁月</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/09/09/note-essence-of-linear-algrbra/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Criss">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="陪你度过漫长岁月">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="陪你度过漫长岁月" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                课程笔记《线性代数的本质》
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-09T11:15:46+08:00">
+                2017-09-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/课程笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">课程笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/09/09/note-essence-of-linear-algrbra/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/09/09/note-essence-of-linear-algrbra/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+              <div class="post-description">
+                  形象、直观地理解线性代数
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="向量"><a href="#向量" class="headerlink" title="向量"></a>向量</h2><h3 id="不同视角下的向量"><a href="#不同视角下的向量" class="headerlink" title="不同视角下的向量"></a>不同视角下的向量</h3><ul>
+<li>physics：箭头</li>
+<li>cs：数字列表（e.g. $ \begin{bmatrix} 1 \\\ 2\end{bmatrix} $）</li>
+<li>mathematician： $ \vec{\bf{v}} $<ul>
+<li>抽象理解，任何相加和数乘有意义的东西</li>
+<li>physics和cs都只是其中一种实例，还可以是其他任意满足性质的东西（e.g. 函数）</li>
+</ul>
+</li>
+</ul>
+<h3 id="physics-view与cs-view的联系"><a href="#physics-view与cs-view的联系" class="headerlink" title="physics view与cs view的联系"></a>physics view与cs view的联系</h3><ul>
+<li>桥梁：坐标系</li>
+<li>对偶性（独立推导、一一对应）：表示、运算（加法、数乘）</li>
+<li>作用<ul>
+<li>physics→cs：已知想要的图形变换效果，使用$ \begin{bmatrix} 1 \\\ 2\end{bmatrix} $与计算机进行交流 </li>
+<li>cs→physics：已知$ \begin{bmatrix} 1 \\\ 2\end{bmatrix} $相关的等式，使用图形直观理解物理意义</li>
+</ul>
+</li>
+</ul>
+<h2 id="线性组合、张成的空间与基"><a href="#线性组合、张成的空间与基" class="headerlink" title="线性组合、张成的空间与基"></a>线性组合、张成的空间与基</h2><p>为什么称$a \vec{\bf{v}} + b \vec{\bf{w}}$是$\vec{\bf{v}}$与$\vec{\bf{w}}$的<strong>线性</strong>组合：固定$\vec{\bf{v}}$的条件下，任意取$\vec{\bf{w}}$，得到的是一条线</p>
+<h2 id="矩阵与线性变换"><a href="#矩阵与线性变换" class="headerlink" title="矩阵与线性变换"></a>矩阵与线性变换</h2><h3 id="Linear-Transformation"><a href="#Linear-Transformation" class="headerlink" title="Linear Transformation"></a>Linear Transformation</h3><ul>
+<li>transformation<ul>
+<li>相当于function（输入、输出）</li>
+<li>但之所以不用function，是因为transformation更有动感（由一个地方运动到另外一个地方）</li>
+<li>用网格线可视化（i.e. 画出网格线变换前后的位置）的时候，直观感受是空间发生变化</li>
+</ul>
+</li>
+<li>linear<ul>
+<li>直线仍然是直线、原点位置不变（i.e. 保持网格线平行并等距分布）</li>
+</ul>
+</li>
+</ul>
+<h3 id="如何表示这个Linear-Transformation"><a href="#如何表示这个Linear-Transformation" class="headerlink" title="如何表示这个Linear Transformation"></a>如何表示这个Linear Transformation</h3><ul>
+<li>一般来说，描述一个变换，我们需要记下所有的输入、输出pair</li>
+<li>但由于线性变换具有保持网格线平行且等距分布的性质</li>
+<li>发现假如原向量$\vec{\bf{v}}$是$\hat{\bf{i}}$和$\hat{\bf{j}}$的线性组合（伸缩），那么新向量$\vec{\bf{v}}_{new}$会是$\hat{\bf{i}}_{new}$和$\hat{\bf{j}}_{new}$相同的线性组合（伸缩）</li>
+<li>因此仅需记录$\hat{\bf{i}}_{new}$和$\hat{\bf{j}}_{new}$即有<strong>足够信息</strong>表示该线性变换（假设知道输入向量关于原向量$\hat{\bf{i}}$和$\hat{\bf{j}}$的线性组合，通过$\hat{\bf{i}}_{new}$和$\hat{\bf{j}}_{new}$即可以求得输出向量）</li>
+<li>【以上全部都只用到了图形化的解释，没有涉及坐标这个概念（i.e. 保存这个信息可以不用坐标，而是直接把新的箭头画出来，然后做箭头的加法和数乘）】</li>
+<li>【下面为了用数学来表示，开始引入坐标的概念】</li>
+<li>为了用坐标表示，需要选择一个基，于是选择原来的$\hat{\bf{i}}$和$\hat{\bf{j}}$作为基，之后的所有坐标都基于这个基</li>
+<li>引入坐标后，只需记录$\hat{\bf{i}}_{new}$和$\hat{\bf{j}}_{new}$的坐标，就有足够的信息表示该线性变换</li>
+<li>该坐标可以表示成矩阵的形式，因此<strong>矩阵与线性变换具有对偶性</strong></li>
+</ul>
+<h3 id="线性组合、线性变换、向量的表示"><a href="#线性组合、线性变换、向量的表示" class="headerlink" title="线性组合、线性变换、向量的表示"></a>线性组合、线性变换、向量的表示</h3><ul>
+<li>注意，下面三者是独立的：<ul>
+<li>向量的线性组合：$\vec{\bf{v}}$如何由$\hat{\bf{i}}$和$\hat{\bf{j}}$通过加法和数乘得到</li>
+<li>线性变换：具有保持网格线平行且等距分布性质的mapping</li>
+<li>向量的表示：引入一组基，使用一个数字列表表示沿各基的伸缩</li>
+</ul>
+</li>
+<li>e.g.<ul>
+<li>向量的线性组合：$\bf{v} = 2\bf{i} + 3\bf{j}$<div style="width:400px; margin-left:auto; margin-right:auto;"><br><img src="/2017/09/09/note-essence-of-linear-algrbra/combination.png" alt="向量的线性组合" title="向量的线性组合"><br></div></li>
+<li>线性变换<ul>
+<li>通过变换后有${\bf{v}}_{new}$、${\bf{i}}_{new}$和${\bf{j}}_{new}$</li>
+<li>${\bf{v}}_{new}$关于${\bf{i}}_{new}$和${\bf{j}}_{new}$的线性组合仍然为2和3<div style="width:400px; margin-left:auto; margin-right:auto;"><br><img src="/2017/09/09/note-essence-of-linear-algrbra/transformation.png" alt="线性变换" title="线性变换"><br></div></li>
+</ul>
+</li>
+<li>向量的表示：<ul>
+<li>$\bf{i}$和$\bf{j}$的坐标可以基于任意基S</li>
+<li>${\bf{i}}_{new}$和${\bf{j}}_{new}$的坐标可以基于任意基T</li>
+<li>最终${\bf{v}}_{new}$的坐标基于基T<div style="width:400px; margin-left:auto; margin-right:auto;"><br><img src="/2017/09/09/note-essence-of-linear-algrbra/representation.png" alt="向量的表示" title="向量的表示"><br></div></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>一般情况下，对于向量的表示，都直接选取$\bf{i}$和$\bf{j}$作为基，这样做的好处是<ul>
+<li>可以直接从$\bf{v}$的坐标知道线性组合</li>
+<li>不用再为${\bf{i}}_{new}$和${\bf{j}}_{new}$选取新的基</li>
+<li>最终的${\bf{v}}_{new}$的坐标与$\bf{v}$基于相同的基</li>
+</ul>
+</li>
+<li>核心在于三点：<ul>
+<li>追踪用于表示$\vec{v}$的向量</li>
+<li>线性组合</li>
+<li>向量的表示</li>
+</ul>
+</li>
+</ul>
+<h3 id="A-vec-bf-x-的两种理解"><a href="#A-vec-bf-x-的两种理解" class="headerlink" title="$A\vec{\bf{x}}$的两种理解"></a>$A\vec{\bf{x}}$的两种理解</h3><ul>
+<li>结果上来看，就是得到一个新的向量（箭头）</li>
+<li>由于该箭头使用坐标的形式表示的，那么肯定跟基相关</li>
+<li>过程可以有两个理解（主要是针对坐标x的理解不同）：<ul>
+<li>把A看成是线性变换的表示【有发生线性变换，向量的表示没变】：那么$A\vec{\bf{x}}$就可以理解为将在基1下的坐标x经过线性变换得到的在基1下的新坐标</li>
+<li>把A看成是基2【没有发生线性变换，只是向量的表示发生了变化】：那么$A\vec{\bf{x}}$就可以理解为在基2下的坐标x在基1下的坐标</li>
+</ul>
+</li>
+</ul>
+<h2 id="矩阵乘法与线性变换复合"><a href="#矩阵乘法与线性变换复合" class="headerlink" title="矩阵乘法与线性变换复合"></a>矩阵乘法与线性变换复合</h2><ul>
+<li>两个矩阵相乘：一个结合两种变换的变换</li>
+<li>复合矩阵求解：追踪${\bf{i}}_{new}$和${\bf{j}}_{new}$</li>
+<li>直观理解解释：<ul>
+<li>交换律（$AB \neq BA$）不成立</li>
+<li>结合律（$(AB)C = A(BC)$）成立：复合变换AB等价于顺序进行变换B、A</li>
+</ul>
+</li>
+</ul>
+<h2 id="行列式"><a href="#行列式" class="headerlink" title="行列式"></a>行列式</h2><ul>
+<li>动机：衡量线性变换使得空间伸缩了多少</li>
+<li>含义：<ul>
+<li>大小表示：单位正方形/立方体的面积/体积伸缩的比例</li>
+<li>正负表示：定向（右手法则）<div style="width:400px; margin-left:auto; margin-right:auto;"><br><img src="/2017/09/09/note-essence-of-linear-algrbra/det.png" alt="行列式的含义" title="行列式的含义"><br></div></li>
+</ul>
+</li>
+<li>等价：<ul>
+<li>行列式等于0</li>
+<li>降维</li>
+</ul>
+</li>
+<li>直观解释$det(AB) = det(A)det(B)$：<ul>
+<li>$det(AB)$的含义是求解复合变换$AB$使得体积伸缩了几倍</li>
+<li>复合变换$AB$首先进行变换$B$使得空间伸缩了$det(B)$，然后进行变换$A$使得空间伸缩了$det(A)$倍</li>
+<li>所以体积总共伸缩了$det(A)det(B)$倍</li>
+</ul>
+</li>
+</ul>
+<h2 id="逆矩阵、列空间与零空间"><a href="#逆矩阵、列空间与零空间" class="headerlink" title="逆矩阵、列空间与零空间"></a>逆矩阵、列空间与零空间</h2><h3 id="矩阵的用途：求解线性方程组"><a href="#矩阵的用途：求解线性方程组" class="headerlink" title="矩阵的用途：求解线性方程组"></a>矩阵的用途：求解线性方程组</h3><ul>
+<li>$A\vec{\bf{x}} = \vec{\bf{b}}$：找一个经过变换后等于$\vec{\bf{b}}$的向量</li>
+<li>$det(A) \neq 0$：有唯一解，一一对应<ul>
+<li>假如有一个变换，能使得$\vec{\bf{b}}$变到$\vec{\bf{x}}$</li>
+<li>那么只要对$\vec{\bf{b}}$进行该变换即可得到要求的$\vec{\bf{x}}$</li>
+<li>因为对于$\vec{\bf{x}}$来说，先进行变换$A$后再进行该变换等于没变</li>
+<li>所以称该变换为$A$的逆</li>
+<li>由此含义可知，以下等价<ul>
+<li>逆存在</li>
+<li>没有降维</li>
+<li>行列式不等于0</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>$det(A) = 0$：不一定有解，除非$\vec{\bf{b}}$恰好在降维所在空间（列空间），此时有无限多个解（e.g. 两个共线向量表示该方向上的向量）<ul>
+<li>行列式等于0</li>
+<li>降维（e.g. 空间由面变成线）</li>
+<li>逆不存在<ul>
+<li>假如逆存在</li>
+<li>存在一个变换（函数）由线map到面</li>
+<li>矛盾（违反函数的定义）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h3><ul>
+<li>动机：衡量降维的程度（降到点/线/面）</li>
+<li>含义：降维后的维度</li>
+</ul>
+<h3 id="零空间"><a href="#零空间" class="headerlink" title="零空间"></a>零空间</h3><ul>
+<li>动机：衡量有多少向量被映射到零向量（$A\vec{\bf{x}}=\vec{\bf{0}}$）</li>
+<li>假如没有降维，只有零向量会被映射到零向量</li>
+<li>假如降维，会有其他向量被映射到零向量</li>
+<li>被映射到零向量的向量组成零空间<ul>
+<li>零空间有非零向量</li>
+<li>降维</li>
+<li>行列式等于0</li>
+</ul>
+</li>
+</ul>
+<h2 id="非方阵"><a href="#非方阵" class="headerlink" title="非方阵"></a>非方阵</h2><ul>
+<li>$\begin{bmatrix} 1 &amp; 2 \\\ 2 &amp; 2 \\\ 3 &amp; 3 \end{bmatrix}$：<ul>
+<li>$\begin{bmatrix} １ \\\ ０\end{bmatrix}$ →　$\begin{bmatrix} 1 \\\ 2  \\\ 3 \end{bmatrix}$</li>
+<li>$\begin{bmatrix} 0 \\\ 1\end{bmatrix}$ →　$\begin{bmatrix} ２ \\\ 2  \\\ 3 \end{bmatrix}$</li>
+</ul>
+</li>
+<li>$\begin{bmatrix} 1 &amp; 2 &amp; 3\\\ 2 &amp; 2 &amp; 3 \end{bmatrix}$：<ul>
+<li>$\begin{bmatrix} １ \\\ ０ \\\ 0\end{bmatrix}$ →　$\begin{bmatrix} 1 \\\ 2\end{bmatrix}$</li>
+<li>$\begin{bmatrix} 0 \\\ 1 \\\ 0\end{bmatrix}$ →　$\begin{bmatrix} 2 \\\ 2\end{bmatrix}$</li>
+<li>$\begin{bmatrix} 0 \\\ ０ \\\ 1\end{bmatrix}$ →　$\begin{bmatrix} 3 \\\ 3\end{bmatrix}$</li>
+</ul>
+</li>
+</ul>
+<h2 id="点积与对偶性"><a href="#点积与对偶性" class="headerlink" title="点积与对偶性"></a>点积与对偶性</h2><ul>
+<li>证明点积与顺序无关思路：<ul>
+<li>先证等长时顺序无关</li>
+<li>再证不等长时顺序无关（标量相乘）<div style="width:400px; margin-left:auto; margin-right:auto;"><br><img src="/2017/09/09/note-essence-of-linear-algrbra/dot_product_order.png" alt="点积顺序无关" title="点积顺序无关"><br></div></li>
+</ul>
+</li>
+<li>对偶性：一一对应</li>
+<li>点积：<ul>
+<li>物理含义：投影长度再乘以被投影向量长度</li>
+<li>数学含义</li>
+</ul>
+</li>
+<li>证明对偶型思路：<ul>
+<li>验证单位向量点积：<ul>
+<li>定义投影到单位向量$\vec{\bf{\hat{u}}}=\begin{bmatrix} x \\\ y \end{bmatrix}$的投影长度这种线性变换</li>
+<li>得到投影长度这种线性变换对应的矩阵为$\begin{bmatrix} x &amp; y\end{bmatrix}$</li>
+<li>运算结果恰好等于与一个单位向量点积的数学形式<div style="width:400px; margin-left:auto; margin-right:auto;"><br><img src="/2017/09/09/note-essence-of-linear-algrbra/dot_product_projection.png" alt="单位向量点积等价于投影长度这种线性变换" title="单位向量点积等价于投影长度这种线性变换"><br></div></li>
+</ul>
+</li>
+<li>验证非单位向量点积：<ul>
+<li>对于一个任意长度的向量$\vec{\bf{u}}=k\vec{\bf{\hat{u}}}$</li>
+<li>定义投影到其单位向量$\vec{\bf{\hat{u}}}=\begin{bmatrix} x \\\ y \end{bmatrix}$的投影长度乘以其长度k这种线性变换</li>
+<li>得到投影长度这种线性变换对应的矩阵为$k\begin{bmatrix} x &amp; y\end{bmatrix}$</li>
+<li>运算结果恰好等于与一个非单位向量$\vec{\bf{u}}$点积的数学形式</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>将一个向量倒过来：投影到这个向量的投影长度乘以这个向量的长度这种线性变换对应的矩阵</li>
+</ul>
+<h2 id="叉乘"><a href="#叉乘" class="headerlink" title="叉乘"></a>叉乘</h2><ul>
+<li>叉乘：<ul>
+<li>向量：大小为两向量平行四边形面积，方向为右手定则的向量</li>
+<li>数学含义<ul>
+<li>二维：$det(\begin{bmatrix} \vec{\bf{u}} &amp; \vec{\bf{v}} \end{bmatrix})$</li>
+<li>三维：$det(\begin{bmatrix} {\begin{bmatrix} i \\\ j \\\ k \end{bmatrix}} &amp; \vec{\bf{u}} &amp; \vec{\bf{v}} \end{bmatrix})$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>证明思路<ul>
+<li>根据叉乘的定义，他是由$det(\begin{bmatrix} {\begin{bmatrix} i \\\ j \\\ k \end{bmatrix}} &amp; \vec{\bf{u}} &amp; \vec{\bf{v}} \end{bmatrix}) = Xi + Yj +Zk$得到的向量$\begin{bmatrix} X \\\ Y \\\ Z \end{bmatrix}$</li>
+<li>要证明$\begin{bmatrix} X \\\ Y \\\ Z \end{bmatrix}$的大小为$\vec{\bf{u}}$和 $\vec{\bf{v}}$构成的平行四边型的面积，方向为右手定则<ul>
+<li>$Xi + Yj +Zk$的大小的物理意义有两个（i.e. 所找向量必须同时满足以下两个性质）<ul>
+<li>$\begin{bmatrix} X \\\ Y \\\ Z \end{bmatrix}$与$\begin{bmatrix} i \\\ j \\\ k \end{bmatrix}$的点积</li>
+<li>$\begin{bmatrix} i \\\ j \\\ k \end{bmatrix}$、$\vec{\bf{u}}$和 $\vec{\bf{v}}$构成的平行六面体的体积</li>
+</ul>
+</li>
+<li>当$Xi + Yj +Zk$大小为$\vec{\bf{u}}$和 $\vec{\bf{v}}$构成的平行四边型的面积，方向为右手定则时同时成立</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="基变换"><a href="#基变换" class="headerlink" title="基变换"></a>基变换</h2><h3 id="向量表示（坐标）的变换"><a href="#向量表示（坐标）的变换" class="headerlink" title="向量表示（坐标）的变换"></a>向量表示（坐标）的变换</h3><ul>
+<li>从基于A系的坐标得到基于B系的坐标<ul>
+<li>对于一个坐标为$\begin{bmatrix} 2 \\\ 3\end{bmatrix}$的向量</li>
+<li>我们可以假设这个坐标是基于$\vec{\bf{u}}$和$\vec{\bf{v}}$的（i.e. 2和3是向量关于$\vec{\bf{u}}$和$\vec{\bf{v}}$的线性组合）</li>
+<li>那么假如想要得到这个向量基于$\vec{\bf{i}}$和$\vec{\bf{j}}$的表示，只需得到$\vec{\bf{u}}$和$\vec{\bf{v}}$基于$\vec{\bf{i}}$和$\vec{\bf{j}}$的表示（i.e. 从基于A系的坐标得到基于B系的坐标）</li>
+<li>从之前关于矩阵的两个理解可知该变换是个矩阵，记为M</li>
+</ul>
+</li>
+<li>根据上述得到的矩阵M直接取得B系到A系的坐标变换<ul>
+<li>假设B系到A系的坐标变换矩阵为M’</li>
+<li>那么对于A系下坐标为$\begin{bmatrix} 2 \\\ 3\end{bmatrix}$的向量</li>
+<li>先进行M变换将该坐标转换为B系下的坐标，再进行M’变换将B系下坐标转换为A系下坐标，得到的结果必然还是$\begin{bmatrix} 2 \\\ 3\end{bmatrix}$</li>
+<li>由此可得M’M是一个什么都不干的变换，所以M’是M的逆</li>
+</ul>
+</li>
+</ul>
+<h3 id="变换表示（矩阵）的变换"><a href="#变换表示（矩阵）的变换" class="headerlink" title="变换表示（矩阵）的变换"></a>变换表示（矩阵）的变换</h3><ul>
+<li>对于同一个线性变换，基于不同的系有不同的表示</li>
+<li>假设线性变换在标准系下的表示为M，要求该线性变化在系A下的表示<ul>
+<li>一般来说，在表示一个变换的时候，希望输入的表示和输出的表示是基于同一个系的</li>
+<li>输入的表示取决于基</li>
+<li>输出的表示取决于变换后基的表示</li>
+<li>所以为了输入输出基于相同系，变换后基的表示也取表示输入的基</li>
+<li>因此矩阵里面的列向量要与输入基于相同的基</li>
+<li>所以下面第一步是将基统一</li>
+</ul>
+</li>
+<li>A：将A系下的表示转换为标准系下的表示</li>
+<li>MA：在标准系下进行转换</li>
+<li>A’MA：通过A’将标准系下的向量转换为A系下的表示</li>
+<li>因此A’MA也称M的【相似矩阵】</li>
+</ul>
+<h2 id="特征向量与特征值"><a href="#特征向量与特征值" class="headerlink" title="特征向量与特征值"></a>特征向量与特征值</h2><ul>
+<li>eigen vector：变换后方向不变的向量</li>
+<li>eigen value：变换后在对应eigen vector的伸缩量</li>
+<li>eigen basis：<ul>
+<li>有可能不够eigen vector来张成整个空间</li>
+<li>假如有的话，好处是：<ul>
+<li>在该变换下，基只发生了伸缩</li>
+<li>用该基表示变换的话可以是对角矩阵，因为变换后基只与变换前基的一项相关，其余全是0</li>
+<li>对角矩阵算幂很爽</li>
+</ul>
+</li>
+<li>应用：算A的幂<ul>
+<li>A是标准系下某个线性变换的表示</li>
+<li>假如A有eigen basis（i.e.　足够多的方向不变向量）</li>
+<li>求A对应的线性变换在eigen　basis下的表示（形式为B’AB），且该表示必然为对角矩阵【矩阵的对角化】</li>
+<li>在eigen basis下进行幂运算</li>
+<li>最后再把向量在eigen basis下的表示转回在标准系下的表示</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="抽象向量空间"><a href="#抽象向量空间" class="headerlink" title="抽象向量空间"></a>抽象向量空间</h2><ul>
+<li>基本就是1中所说的mathematician view（i.e.　满足一些性质（定义了加法、数乘，且运算封闭等等）的东西，physics view和cs　view等等都是向量的具体化）</li>
+<li>这里举了一个例子：<ul>
+<li>向量：多项式函数</li>
+<li>线性变换：求导</li>
+</ul>
+</li>
+</ul>
+<h2 id="收获"><a href="#收获" class="headerlink" title="收获"></a>收获</h2><ul>
+<li>对线性代数有了更加直观、深刻的理解<ul>
+<li>理清了原先混淆的概念<br>+　知道了为什么一些操作的物理含义是这样的</li>
+</ul>
+</li>
+<li>对偶性的idea很美</li>
+<li>视频开始的句子很美</li>
+</ul>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="http://space.bilibili.com/88461692#!/channel/detail?cid=9450" target="_blank" rel="external">线性代数的本质</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/线性代数的本质/" rel="tag"># 线性代数的本质</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/14/paper-orca/" rel="next" title="论文笔记《Reciprocal n-body Collision Avoidance》">
+                <i class="fa fa-chevron-left"></i> 论文笔记《Reciprocal n-body Collision Avoidance》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/09/note-linear-algebra/" rel="prev" title="课程笔记《MIT18.06线性代数》">
+                课程笔记《MIT18.06线性代数》 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Criss" />
+          <p class="site-author-name" itemprop="name">Criss</p>
+          <p class="site-description motion-element" itemprop="description">Talk is cheap</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#向量"><span class="nav-number">1.</span> <span class="nav-text">向量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#不同视角下的向量"><span class="nav-number">1.1.</span> <span class="nav-text">不同视角下的向量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#physics-view与cs-view的联系"><span class="nav-number">1.2.</span> <span class="nav-text">physics view与cs view的联系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线性组合、张成的空间与基"><span class="nav-number">2.</span> <span class="nav-text">线性组合、张成的空间与基</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵与线性变换"><span class="nav-number">3.</span> <span class="nav-text">矩阵与线性变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linear-Transformation"><span class="nav-number">3.1.</span> <span class="nav-text">Linear Transformation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何表示这个Linear-Transformation"><span class="nav-number">3.2.</span> <span class="nav-text">如何表示这个Linear Transformation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线性组合、线性变换、向量的表示"><span class="nav-number">3.3.</span> <span class="nav-text">线性组合、线性变换、向量的表示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#A-vec-bf-x-的两种理解"><span class="nav-number">3.4.</span> <span class="nav-text">$A\vec{\bf{x}}$的两种理解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#矩阵乘法与线性变换复合"><span class="nav-number">4.</span> <span class="nav-text">矩阵乘法与线性变换复合</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#行列式"><span class="nav-number">5.</span> <span class="nav-text">行列式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#逆矩阵、列空间与零空间"><span class="nav-number">6.</span> <span class="nav-text">逆矩阵、列空间与零空间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#矩阵的用途：求解线性方程组"><span class="nav-number">6.1.</span> <span class="nav-text">矩阵的用途：求解线性方程组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rank"><span class="nav-number">6.2.</span> <span class="nav-text">Rank</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#零空间"><span class="nav-number">6.3.</span> <span class="nav-text">零空间</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#非方阵"><span class="nav-number">7.</span> <span class="nav-text">非方阵</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#点积与对偶性"><span class="nav-number">8.</span> <span class="nav-text">点积与对偶性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#叉乘"><span class="nav-number">9.</span> <span class="nav-text">叉乘</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基变换"><span class="nav-number">10.</span> <span class="nav-text">基变换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#向量表示（坐标）的变换"><span class="nav-number">10.1.</span> <span class="nav-text">向量表示（坐标）的变换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#变换表示（矩阵）的变换"><span class="nav-number">10.2.</span> <span class="nav-text">变换表示（矩阵）的变换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特征向量与特征值"><span class="nav-number">11.</span> <span class="nav-text">特征向量与特征值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象向量空间"><span class="nav-number">12.</span> <span class="nav-text">抽象向量空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#收获"><span class="nav-number">13.</span> <span class="nav-text">收获</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">14.</span> <span class="nav-text">References</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Criss</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'meltycriss';
+      var disqus_identifier = '2017/09/09/note-essence-of-linear-algrbra/';
+
+      var disqus_title = "课程笔记《线性代数的本质》";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

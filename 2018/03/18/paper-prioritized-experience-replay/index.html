@@ -1,0 +1,792 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Prioritized Experience Replay," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="优化experience replay的一种方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记《Prioritized Experience Replay》">
+<meta property="og:url" content="http://yoursite.com/2018/03/18/paper-prioritized-experience-replay/index.html">
+<meta property="og:site_name" content="陪你度过漫长岁月">
+<meta property="og:description" content="优化experience replay的一种方法">
+<meta property="og:image" content="http://yoursite.com/2018/03/18/paper-prioritized-experience-replay/env.png">
+<meta property="og:image" content="http://yoursite.com/2018/03/18/paper-prioritized-experience-replay/fig.png">
+<meta property="og:updated_time" content="2024-08-04T13:35:55.644Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="论文笔记《Prioritized Experience Replay》">
+<meta name="twitter:description" content="优化experience replay的一种方法">
+<meta name="twitter:image" content="http://yoursite.com/2018/03/18/paper-prioritized-experience-replay/env.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/03/18/paper-prioritized-experience-replay/"/>
+
+
+
+
+
+  <title> 论文笔记《Prioritized Experience Replay》 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">陪你度过漫长岁月</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/03/18/paper-prioritized-experience-replay/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Criss">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="陪你度过漫长岁月">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="陪你度过漫长岁月" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                论文笔记《Prioritized Experience Replay》
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-03-18T11:46:52+08:00">
+                2018-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/论文笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">论文笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/03/18/paper-prioritized-experience-replay/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/03/18/paper-prioritized-experience-replay/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+              <div class="post-description">
+                  优化experience replay的一种方法
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="motivation"><a href="#motivation" class="headerlink" title="motivation"></a>motivation</h2><p>experience replay是DQN的一个关键技术，它通过存取transition的操作<strong>打破了数据之间的相关性</strong>，使得数据<strong>满足优化方法（e.g., SGD）的假设（i.e., i.i.d.）</strong>，从而提高了学习的效果。</p>
+<p>naive的experience replay在取transition时采用的策略是均匀采样，对所有transition一视同仁。但直觉上来说，<strong>各个transition的重要性应该是不同的</strong>，有的transition的“信息量”比较大，有的transition则没什么用。</p>
+<p>我们拿一个具体的例子来说明均匀采样有什么问题，假设我们有一个如下图所示的environment，它有$n$个状态，$2$个动作，初始状态为$1$，状态转移如箭头所示，当且仅当沿绿色箭头走的时候会有$1$的reward，其余情况的reward均为$0$。那么假如采用随机策略从初始状态开始走$n$步，我们能够获得有用的信息（reward非$0$）的可能性为$1/2^n$。也就是说，假如我们把各transition都存了起来，然后采用均匀采样来取transition，我们仅有$1/2^n$的概率取到有用的信息，这样的话学习效率就会很低。</p>
+<div style="width:800px; margin-left:auto; margin-right:auto;"><br>  <img src="/2018/03/18/paper-prioritized-experience-replay/env.png" alt="environment" title="environment"><br></div>
+
+<p>作者还做了个实验，来说明transition的选取顺序对学习效率有很大的影响。下图横轴代表experience replay的大小，纵轴表示学习所需的更新次数。黑色的线表示采用均匀采样得到的结果，绿色的线表示每次都选取”最好“的transition的结果。可以看到，这个效率提升是很明显的。</p>
+<div style="width:800px; margin-left:auto; margin-right:auto;"><br>  <img src="/2018/03/18/paper-prioritized-experience-replay/fig.png" alt="transition选取顺序对学习效率的影响" title="transition选取顺序对学习效率的影响"><br></div>
+
+<p>于是很自然的就会有一个想法，能不能通过<strong>优先学习那些“信息量”比较大的transition</strong>来提高学习效率呢？</p>
+<h2 id="idea"><a href="#idea" class="headerlink" title="idea"></a>idea</h2><ul>
+<li>首先需要给出一个<strong>衡量“信息量”大小的指标</strong>，文中用的是TD-error。</li>
+<li>有了一个评价指标之后，最直接的想法是贪心地选”信息量“最大的transition。但这种<strong>贪心的方法有以下问题</strong>：<ul>
+<li>贪心的依据不准确：由于考虑到算法效率，我们不会每次critic更新后都更新所有transition的TD-error，我们只会更新当次取到的transition的TD-error。因此<strong>transition的TD-error对应的critic是以前的critic</strong>（更准确地说，是上次取到该transition时的critic）而不是当前的critic。也就是说某一个transition的TD-error较低，只能够说明它对之前的critic“信息量”不大，而不能说明它对当前的critic“信息量”不大，因此根据TD-error进行贪心有可能会错过对当前critic“信息量”大的transition。</li>
+<li><strong>容易overfitting</strong>：基于贪心的做法还容易<strong>“旱的旱死，涝的涝死”</strong>（这应该是一个empirical result，因为从原理上来说，被选中的transition的TD-error在critic更新后会下降，然后排到后面去，下一次就不会选中这些transition），来来去去都是那几个transition，导致overfitting。</li>
+<li>为了处理上述问题，作者提出stochastic prioritization，随机化的采样过程，“信息量”越大，被抽中的概率越大，但即使是“信息量”最大的transition，也不一定会被抽中，仅仅只是被抽中的概率较大。</li>
+</ul>
+</li>
+<li><strong>改变采样顺序会改变样本分布</strong>，假设原来的样本$x$服从分布$A$，在改变采样顺序后，$x$服从的分布为$B$，我们要求的是$\mathbb{E}_{x \sim A}[f(x)]$，而我们现在只有$\mathbb{E}_{x \sim B}[ \bullet ]$。因此我们需要基于分布$B$的期望来计算在分布$A$下的期望，这就是importance sampling的作用。</li>
+</ul>
+<h2 id="detail"><a href="#detail" class="headerlink" title="detail"></a>detail</h2><ul>
+<li>两种stochastic prioritization方案<ul>
+<li>两种方案都基于以下概率模型（softmax）：<br>$$<br>P(i) = \frac{p_i^\alpha}{\sum_k p_k^\alpha},<br>$$其中$p_i$为第$i$个transition的priority，$\alpha$用于调节优先程度（$\alpha = 0$的时候退化为均匀采样）。而两种方案的<strong>区别在于对priority的定义不同</strong>。</li>
+</ul>
+<ul>
+<li>proportional prioritization<ul>
+<li>$p_i = \vert \delta_i \vert + \epsilon$，其中$\delta_i$为TD-erroe，$\epsilon$用于防止概率为$0$。</li>
+<li>可能会<strong>对outlier更加敏感</strong>。</li>
+<li>实现的时候采用sum tree的数据结构。</li>
+</ul>
+</li>
+<li>rank-based prioritization<ul>
+<li>$p_i = 1/\text{rank}(i)$。</li>
+<li>只是<strong>定性</strong>地考虑priority，没有定量地考虑priority。</li>
+<li>实现类似分层抽样，事先将排名段分为几个等概率区间，再在各个等概率区间里面均匀采样。比如说，假设experience replay大小为100，batch size为3，那么就事先通过计算，将100分为3个等概率区间（e.g., A:1-20，B:21-50, C:51-100），之后就在A、B和C区间内分别做均匀采样，最后取得3个transition。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>importance sampling<ul>
+<li>核心公式为：<br>$$\mathbb{E}_{x \sim A}[f(x)] = \sum_x P_A(x)f(x) = \sum_x P_B(x) \frac{P_A(x)}{P_B(x)}f(x) = \mathbb{E}_{x \sim B}[\frac{P_A(x)}{P_B(x)}f(x)].$$</li>
+<li>将具体的$P_A(x)=1/N$与$P_B(x)=P(i)$代入后，就得到所谓的importance-sampling weight<br>$$<br>w_i = (\frac{1}{N} \cdot \frac{1}{P(i)})^\beta,<br>$$其中，$\beta$用于调节bias程度（作者argue说学习的初始阶段有bias也没所谓，但在后期就要消除bias）。</li>
+<li>作者还说这个importance sampling要除以$\text{max}_i w_i$（这个$i$应该是指minibatch，如果是指experience replay的话，那在采取proportional prioritization的时候开销就太大了），以此保证update一定是scale downward的（感觉是为了控制step size）。</li>
+</ul>
+</li>
+</ul>
+<h2 id="more"><a href="#more" class="headerlink" title="more"></a>more</h2><ul>
+<li>针对具体问题，<strong>某种stochastic prioritization方案会表现得比另外一种更好</strong>。</li>
+<li>类似的priority思想可以<strong>用到supervised learning中</strong>。</li>
+<li>某个transition被访问的次数反映了这个transition的“重要性”，可以<strong>作为一个feedback signal给到exploration</strong>。</li>
+<li>可以通过这种方法<strong>减小experience replay的大小</strong>，从而减少训练所需的内存。</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Prioritized-Experience-Replay/" rel="tag"># Prioritized Experience Replay</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/02/26/paper-acktr/" rel="next" title="论文笔记《Scalable trust-region method for deep reinforcement learning using  Kronecker-factored approximation》">
+                <i class="fa fa-chevron-left"></i> 论文笔记《Scalable trust-region method for deep reinforcement learning using  Kronecker-factored approximation》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/26/tech-gym/" rel="prev" title="技术总结《OpenAI Gym》">
+                技术总结《OpenAI Gym》 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Criss" />
+          <p class="site-author-name" itemprop="name">Criss</p>
+          <p class="site-description motion-element" itemprop="description">Talk is cheap</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#motivation"><span class="nav-number">1.</span> <span class="nav-text">motivation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#idea"><span class="nav-number">2.</span> <span class="nav-text">idea</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#detail"><span class="nav-number">3.</span> <span class="nav-text">detail</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#more"><span class="nav-number">4.</span> <span class="nav-text">more</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Criss</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'meltycriss';
+      var disqus_identifier = '2018/03/18/paper-prioritized-experience-replay/';
+
+      var disqus_title = "论文笔记《Prioritized Experience Replay》";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
