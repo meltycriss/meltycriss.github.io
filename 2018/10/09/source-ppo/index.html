@@ -1,0 +1,788 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="pytorch-ppo," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="基于PyTorch的PPO的源码阅读">
+<meta property="og:type" content="article">
+<meta property="og:title" content="源码阅读《PyTorch PPO》">
+<meta property="og:url" content="http://yoursite.com/2018/10/09/source-ppo/index.html">
+<meta property="og:site_name" content="陪你度过漫长岁月">
+<meta property="og:description" content="基于PyTorch的PPO的源码阅读">
+<meta property="og:updated_time" content="2024-08-13T16:03:47.872Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="源码阅读《PyTorch PPO》">
+<meta name="twitter:description" content="基于PyTorch的PPO的源码阅读">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/10/09/source-ppo/"/>
+
+
+
+
+
+  <title> 源码阅读《PyTorch PPO》 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">陪你度过漫长岁月</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/09/source-ppo/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Criss">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="陪你度过漫长岁月">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="陪你度过漫长岁月" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                源码阅读《PyTorch PPO》
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-10-09T11:56:11+08:00">
+                2018-10-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/源码阅读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码阅读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/10/09/source-ppo/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2018/10/09/source-ppo/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+              <div class="post-description">
+                  基于PyTorch的PPO的源码阅读
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>本文介绍的Proximal Policy Optimization (PPO)实现是基于PyTorch的，其Github地址在<a href="https://github.com/ikostrikov/pytorch-a2c-ppo-acktr" target="_blank" rel="external">这里</a>。实际上它一共实现了三个算法，包括PPO、A2C以及ACKTR。这份代码的逻辑抽象做得不错，三个算法共用了很多代码，因此看懂了PPO对于理解另外两个算法的实现有很大帮助。</p>
+<p>这份PPO代码依赖于<a href="https://github.com/openai/baselines" target="_blank" rel="external">OpenAI baselines</a>，主要用到了其并行环境的wrapper。由于PPO和OpenAI baselines的代码一直在更新，所以最新的代码跟本文可能有所出入。<strong>本文所述代码对应的commit id前缀</strong>为：</p>
+<ul>
+<li>PPO：3aea397</li>
+<li>OpenAI baselines：f272969</li>
+</ul>
+<p>下面先介绍代码的<strong>逻辑框架</strong>，然后再看<strong>具体代码</strong>。具体代码部分以一个类似于<strong>深度优先</strong>的方式展开。</p>
+<h2 id="Logical-framework"><a href="#Logical-framework" class="headerlink" title="Logical framework"></a>Logical framework</h2><p>这份代码按照RL的思想，将代码分成了environment和robot（之所以不用agent这个词，主要是为了跟下面的变量名做区分）两大模块。environment部分主要是<code>envs</code>这个变量，它通过OpenAI baselines的wrapper实现了多环境并行化。robot部分分为了三个子模块，第一个是parametric policy变量<code>actor_critic</code>；第二个是用来保存trajectory的<code>rollouts</code>变量；最后一个是用于参数更新的RL algorithm变量<code>agent</code>。总结一下，其<strong>逻辑框架</strong>如下:</p>
+<ul>
+<li>environment<ul>
+<li>multiprocess wrapper: <code>envs</code></li>
+</ul>
+</li>
+<li>robot<ul>
+<li>parametric policy: <code>actor_critic</code></li>
+<li>trajectory: <code>rollouts</code></li>
+<li>RL algorithm: <code>agent</code></li>
+</ul>
+</li>
+</ul>
+<p>整个<strong>交互流程</strong>基本上是robot从<code>envs</code>中得到一个observation，然后根据<code>actor_critic</code>作出反应，并且将交互过程记录到<code>rollouts</code>中，接着使用<code>agent</code>根据<code>rollouts</code>中的信息来更新<code>actor_critic</code>。</p>
+<h2 id="Source-code"><a href="#Source-code" class="headerlink" title="Source code"></a>Source code</h2><h3 id="main"><a href="#main" class="headerlink" title="main"></a>main</h3><figure class="highlight py"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># PPO_ROOT/main.py</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></div><div class="line">    ...</div><div class="line">    </div><div class="line">    <span class="comment"># 创建并行交互环境envs</span></div><div class="line">    envs = [make_env(args.env_name, args.seed, i, args.log_dir, args.add_timestep)</div><div class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> range(args.num_processes)]</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> args.num_processes &gt; <span class="number">1</span>:</div><div class="line">        envs = SubprocVecEnv(envs)</div><div class="line">    <span class="keyword">else</span>:</div><div class="line">        ...</div><div class="line">    </div><div class="line">    <span class="keyword">if</span> len(envs.observation_space.shape) == <span class="number">1</span>:</div><div class="line">        envs = VecNormalize(envs, gamma=args.gamma)</div><div class="line">    </div><div class="line">    ...</div><div class="line">    </div><div class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> range(num_updates):</div><div class="line">        <span class="keyword">for</span> step <span class="keyword">in</span> range(args.num_steps):</div><div class="line">            <span class="comment"># 通过rollouts获得t时刻的的信息（e.g., o_t），使用actor_critic(i.e., policy)来计算a_t</span></div><div class="line">            <span class="keyword">with</span> torch.no_grad():</div><div class="line">                value, action, action_log_prob, states = actor_critic.act(</div><div class="line">                        rollouts.observations[step],</div><div class="line">                        rollouts.states[step],</div><div class="line">                        rollouts.masks[step])</div><div class="line">    </div><div class="line">            ...</div><div class="line">    </div><div class="line">            <span class="comment"># 使用a_t跟envs(i.e., environment)进行交互</span></div><div class="line">            obs, reward, done, info = envs.step(cpu_actions)</div><div class="line">            </div><div class="line">            ...</div><div class="line">    </div><div class="line">            <span class="comment"># 将交互信息存入rollouts中</span></div><div class="line">            rollouts.insert(current_obs, states, action, action_log_prob, value, reward, masks)</div><div class="line">    </div><div class="line">        ...</div><div class="line">        </div><div class="line">        <span class="comment"># 根据rollouts提供的信息，使用RL algorithm（i.e., PPO）对actor_critic(i.e., policy)进行参数更新</span></div><div class="line">        value_loss, action_loss, dist_entropy = agent.update(rollouts)</div><div class="line">    </div><div class="line">        ...</div></pre></td></tr></table></figure>
+<p>以上代码将<code>main</code>函数的核心部分提了出来。可见，<code>main</code>函数主要有以下<strong>核心步骤</strong>：</p>
+<ol>
+<li>创建并行交互环境<code>envs</code>；</li>
+<li>通过<code>actor_critic</code>与环境进行交互；</li>
+<li>将交互信息存入<code>rollouts</code>；</li>
+<li>使用<code>agent</code>进行参数更新。</li>
+</ol>
+<p>接下来分别展开介绍这四个变量。</p>
+<hr>
+<h3 id="envs"><a href="#envs" class="headerlink" title="envs"></a>envs</h3><p>由<code>main</code>函数中可见，<code>envs</code>变量通过<code>make_env</code>、<code>SubprocVecEnv</code>和<code>VecNormalize</code>得到，接下来分别介绍这三个函数。</p>
+<h4 id="make-env"><a href="#make-env" class="headerlink" title="make_env"></a>make_env</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># PPO_ROOT/envs.py</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_env</span><span class="params">(env_id, seed, rank, log_dir, add_timestep)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_thunk</span><span class="params">()</span>:</span></div><div class="line">    	<span class="comment"># 最基本的gym env</span></div><div class="line">        <span class="keyword">if</span> env_id.startswith(<span class="string">"dm"</span>):</div><div class="line">        	...</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            env = gym.make(env_id)</div><div class="line">        </div><div class="line">        ...</div><div class="line"></div><div class="line">        <span class="comment"># 加了一个Monitor wrapper（注意这个Monitor不是保存视频的gym.Wrappers.Monitor）来记录信息（默认是/tmp/gym/）</span></div><div class="line">        <span class="keyword">if</span> log_dir <span class="keyword">is</span> <span class="keyword">not</span> <span class="keyword">None</span>:</div><div class="line">            env = bench.Monitor(env, os.path.join(log_dir, str(rank)))</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">        <span class="keyword">return</span> env</div><div class="line"></div><div class="line">    <span class="comment"># 返回的是一个函数而不是env</span></div><div class="line">    <span class="keyword">return</span> _thunk</div></pre></td></tr></table></figure>
+<p>从上述代码可以看出，<code>make_env</code>函数返回了一个函数<code>_thunk</code>，调用该函数可以得到一个gym env。（<code>make_env</code>选择返回一个函数而不直接返回一个gym env的原因我不太清楚，我推测是跟<strong>序列化和反序列化</strong>有关。从下面的<code>SubprocVecEnv</code>可见，<code>make_env</code>的返回结果要传给一个在另一个进程运行的函数<code>worker</code>，这个过程应该是需要做序列化和反序列化的，可能传函数比较好实现或者比较高效？）</p>
+<h4 id="SubprocVecEnv"><a href="#SubprocVecEnv" class="headerlink" title="SubprocVecEnv"></a>SubprocVecEnv</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># BASELINE_ROOT/common/vec_env/subproc_vec_env.py</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">worker</span><span class="params">(remote, parent_remote, env_fn_wrapper)</span>:</span></div><div class="line">    parent_remote.close()</div><div class="line">    <span class="comment"># 实例化env，相当于_thunk()（之所以需要.x()是因为用了CloudpickleWrapper，估计是为了处理函数序列化和反序列化的一些问题）</span></div><div class="line">    env = env_fn_wrapper.x()</div><div class="line">    <span class="comment"># 相当于一个一直在跑的env服务</span></div><div class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</div><div class="line">        cmd, data = remote.recv()</div><div class="line">        <span class="keyword">if</span> cmd == <span class="string">'step'</span>:</div><div class="line">            ob, reward, done, info = env.step(data)</div><div class="line">            <span class="keyword">if</span> done:</div><div class="line">                ob = env.reset()</div><div class="line">            remote.send((ob, reward, done, info))</div><div class="line">        <span class="keyword">elif</span> cmd == <span class="string">'reset'</span>:</div><div class="line">            ob = env.reset()</div><div class="line">            remote.send(ob)</div><div class="line">        <span class="keyword">elif</span> cmd == <span class="string">'render'</span>:</div><div class="line">            remote.send(env.render(mode=<span class="string">'rgb_array'</span>))</div><div class="line">        <span class="keyword">elif</span> cmd == <span class="string">'close'</span>:</div><div class="line">            remote.close()</div><div class="line">            <span class="keyword">break</span></div><div class="line">        <span class="keyword">elif</span> cmd == <span class="string">'get_spaces'</span>:</div><div class="line">            remote.send((env.observation_space, env.action_space))</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">raise</span> NotImplementedError</div></pre></td></tr></table></figure>
+<p><code>SubprocVecEnv</code>首先创建不同的subprocess去运行<code>worker</code>，每一个<code>worker</code>基本上相当于一个<strong>env服务</strong>，每收到一个指令就对env执行相应的操作并且返回信息。<code>worker</code>的参数<code>env_fn_wrapper</code>就是<code>_thunk</code>加了一个<code>CloudpickleWrapper</code>，该<code>wrapper</code>好像是用来辅助序列化和反序列化的。</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># BASELINE_ROOT/common/vec_env/subproc_vec_env.py</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubprocVecEnv</span><span class="params">(VecEnv)</span>:</span></div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="comment"># 给subprocess发送step指令</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">step_async</span><span class="params">(self, actions)</span>:</span></div><div class="line">        <span class="keyword">for</span> remote, action <span class="keyword">in</span> zip(self.remotes, actions):</div><div class="line">            remote.send((<span class="string">'step'</span>, action))</div><div class="line">        self.waiting = <span class="keyword">True</span></div><div class="line"></div><div class="line"></div><div class="line">    <span class="comment"># 接收并拼接subprocess返回的交互信息</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">step_wait</span><span class="params">(self)</span>:</span></div><div class="line">        results = [remote.recv() <span class="keyword">for</span> remote <span class="keyword">in</span> self.remotes]</div><div class="line">        self.waiting = <span class="keyword">False</span></div><div class="line">        obs, rews, dones, infos = zip(*results)</div><div class="line">        <span class="keyword">return</span> np.stack(obs), np.stack(rews), np.stack(dones), infos</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="comment"># 这个函数在基类VecEnv中</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">step</span><span class="params">(self, actions)</span>:</span></div><div class="line">        self.step_async(actions)</div><div class="line">        <span class="keyword">return</span> self.step_wait()</div></pre></td></tr></table></figure>
+<p>有了上面的subprocee，主进程中的<code>SubprocVecEnv</code>只需要<strong>重载</strong><code>step</code>, <code>reset</code>等关键函数为发送相应指令给subprocess，然后将数据拼接起来，就实现了跟环境的并行交互。</p>
+<h4 id="VecNormalize"><a href="#VecNormalize" class="headerlink" title="VecNormalize"></a>VecNormalize</h4><figure class="highlight py"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># BASELINE_ROOT/common/vec_env/vec_normalize.py</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">VecNormalize</span><span class="params">(VecEnvWrapper)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, venv, ob=True, ret=True, clipob=<span class="number">10.</span>, cliprew=<span class="number">10.</span>, gamma=<span class="number">0.99</span>, epsilon=<span class="number">1e-8</span>)</span>:</span></div><div class="line">        VecEnvWrapper.__init__(self, venv)</div><div class="line">        <span class="comment"># mean, std计算器</span></div><div class="line">        self.ob_rms = RunningMeanStd(shape=self.observation_space.shape) <span class="keyword">if</span> ob <span class="keyword">else</span> <span class="keyword">None</span></div><div class="line">        self.ret_rms = RunningMeanStd(shape=()) <span class="keyword">if</span> ret <span class="keyword">else</span> <span class="keyword">None</span></div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">step_wait</span><span class="params">(self)</span>:</span></div><div class="line">        obs, rews, news, infos = self.venv.step_wait()</div><div class="line">        self.ret = self.ret * self.gamma + rews</div><div class="line"></div><div class="line">        <span class="comment"># 对obs做normalization（mean, std），具体代码见下面</span></div><div class="line">        obs = self._obfilt(obs)</div><div class="line">        <span class="comment"># 对reward做normalization（不用mean只用std，而且用的是return的std）</span></div><div class="line">        <span class="keyword">if</span> self.ret_rms:</div><div class="line">            self.ret_rms.update(self.ret)</div><div class="line">            rews = np.clip(rews / np.sqrt(self.ret_rms.var + self.epsilon), -self.cliprew, self.cliprew)</div><div class="line">        <span class="keyword">return</span> obs, rews, news, infos</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_obfilt</span><span class="params">(self, obs)</span>:</span></div><div class="line">        <span class="keyword">if</span> self.ob_rms:</div><div class="line">            self.ob_rms.update(obs)</div><div class="line">            obs = np.clip((obs - self.ob_rms.mean) / np.sqrt(self.ob_rms.var + self.epsilon), -self.clipob, self.clipob)</div><div class="line">            <span class="keyword">return</span> obs</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            <span class="keyword">return</span> obs</div><div class="line"></div><div class="line">    ...</div></pre></td></tr></table></figure>
+<p>从上述代码可见，<code>VecNormalize</code>也是一个wrapper，主要功能是<strong>对observation和reward做normalization</strong>。</p>
+<hr>
+<h3 id="actor-critic"><a href="#actor-critic" class="headerlink" title="actor_critic"></a>actor_critic</h3><figure class="highlight py"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># PPO_ROOT/model.py</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Policy</span><span class="params">(nn.Module)</span>:</span></div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">act</span><span class="params">(self, inputs, states, masks, deterministic=False)</span>:</span></div><div class="line">    	<span class="comment"># self.base集actor和critic于一身</span></div><div class="line">    	<span class="comment"># value：V(o_t)</span></div><div class="line">    	<span class="comment"># actor_features：actor网络的倒数第二层</span></div><div class="line">    	<span class="comment"># states：RNN的hidden states</span></div><div class="line">        value, actor_features, states = self.base(inputs, states, masks)</div><div class="line">        <span class="comment"># dist最后的action分布\pi(A_t | o_t)</span></div><div class="line">        dist = self.dist(actor_features)</div><div class="line"></div><div class="line">       	...</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">evaluate_actions</span><span class="params">(self, inputs, states, masks, action)</span>:</span></div><div class="line">        ...</div><div class="line"></div><div class="line">        <span class="comment"># value: V(o_t)</span></div><div class="line">        <span class="comment"># action_log_probs: \log(\pi(a_t | o_t))</span></div><div class="line">        <span class="comment"># dist_entropy: Entropy(\pi(A_t | o_t))</span></div><div class="line">        <span class="comment"># states：RNN的hidden states</span></div><div class="line">        <span class="keyword">return</span> value, action_log_probs, dist_entropy, states</div></pre></td></tr></table></figure>
+<p>表示parametric policy的<code>actor_critic</code>变量对应的类为<code>Policy</code>，基本上就是包含actor和critic的神经网络。如上所示，其主要函数为<code>act</code>和<code>evaluate_actions</code>，前者用于<strong>求action</strong>，后者用于从网络中<strong>获取参数更新要用到的信息</strong>（e.g., $V(o_t), \log\pi(a_t \vert o_t)$）。</p>
+<hr>
+<h3 id="rollouts"><a href="#rollouts" class="headerlink" title="rollouts"></a>rollouts</h3><figure class="highlight py"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># PPO_ROOT/storage.py</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">RolloutStorage</span><span class="params">(object)</span>:</span></div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="comment"># 保存交互信息</span></div><div class="line">    <span class="comment"># current_obs: o_&#123;t+1&#125;</span></div><div class="line">    <span class="comment"># state: RNN中的hidden state，</span></div><div class="line">    <span class="comment"># action: a_t</span></div><div class="line">    <span class="comment"># action_log_prob: \pi(a_t | o_t)</span></div><div class="line">    <span class="comment"># value_pred: V(o_t)</span></div><div class="line">    <span class="comment"># reward: r_t</span></div><div class="line">    <span class="comment"># mask: 标识o_&#123;t+1&#125;时刻是否通过gym.reset()得到，是的话为0，否的话为1</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">insert</span><span class="params">(self, current_obs, state, action, action_log_prob, value_pred, reward, mask)</span>:</span></div><div class="line">        ...</div><div class="line"></div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="comment"># 计算return</span></div><div class="line">    <span class="comment"># 可以选择使用GAE（GAE+V）还是MC来计算return</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">compute_returns</span><span class="params">(self, next_value, use_gae, gamma, tau)</span>:</span></div><div class="line">        <span class="keyword">if</span> use_gae:</div><div class="line">            ...</div><div class="line">        <span class="keyword">else</span>:</div><div class="line">            ...</div><div class="line"></div><div class="line">    <span class="comment"># 将num_steps * num_processes份transitions随机分成num_mini_batch个mini_batch，每次返回一个mini_batch</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">feed_forward_generator</span><span class="params">(self, advantages, num_mini_batch)</span>:</span></div><div class="line">        ...</div><div class="line"></div><div class="line">    <span class="comment"># 考虑到RNN的顺序有关性质，以process为单位将num_steps * num_processes份transitions随机分成num_mini_batch个mini_batch，每次返回一个mini_batch</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">recurrent_generator</span><span class="params">(self, advantages, num_mini_batch)</span>:</span></div><div class="line">        ...</div></pre></td></tr></table></figure>
+<p>用于储存trajectory的<code>rollouts</code>变量对应的类为<code>RolloutStorage</code>，主要功能是<strong>存和取</strong>，其对应的成员函数分别是<code>insert</code>和<code>xxx_generator</code>。还有一个<code>compute_returns</code>函数用于辅助计算更新参数所需的return。</p>
+<hr>
+<h3 id="agent"><a href="#agent" class="headerlink" title="agent"></a>agent</h3><figure class="highlight py"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># PPO_ROOT/algo/ppo.py</span></div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">PPO</span><span class="params">(object)</span>:</span></div><div class="line">    ...</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">update</span><span class="params">(self, rollouts)</span>:</span></div><div class="line">    	<span class="comment"># \hat&#123;A)_t in PPO paper（return的计算可能用的GAE，也可能用的MC）</span></div><div class="line">        <span class="comment"># 并且对advantage做normalization</span></div><div class="line">        advantages = rollouts.returns[:<span class="number">-1</span>] - rollouts.value_preds[:<span class="number">-1</span>]</div><div class="line">        advantages = (advantages - advantages.mean()) / (</div><div class="line">            advantages.std() + <span class="number">1e-5</span>)</div><div class="line"></div><div class="line">        ...</div><div class="line"></div><div class="line">        <span class="keyword">for</span> e <span class="keyword">in</span> range(self.ppo_epoch):</div><div class="line">            ...</div><div class="line"></div><div class="line">            <span class="keyword">for</span> sample <span class="keyword">in</span> data_generator:</div><div class="line">                ...</div><div class="line"></div><div class="line">                <span class="comment"># r_t(\theta) in the PPO paper</span></div><div class="line">                ratio = torch.exp(action_log_probs - old_action_log_probs_batch)</div><div class="line">                surr1 = ratio * adv_targ</div><div class="line">                surr2 = torch.clamp(ratio, <span class="number">1.0</span> - self.clip_param,</div><div class="line">                                           <span class="number">1.0</span> + self.clip_param) * adv_targ</div><div class="line">                <span class="comment"># -L_t^&#123;CLIP&#125;(\theta) in the PPO paper</span></div><div class="line">                action_loss = -torch.min(surr1, surr2).mean()</div><div class="line"></div><div class="line">               	<span class="comment"># L_t^&#123;VF&#125;(\theta) in the PPO paper</span></div><div class="line">                value_loss = F.mse_loss(return_batch, values)</div><div class="line"></div><div class="line">                self.optimizer.zero_grad()</div><div class="line">                <span class="comment"># -L_t^&#123;CLIP+VF+S&#125;(\theta) in the PPO paper（因为我们想做minization，而lr是正的，因此要加负号）</span></div><div class="line">                (value_loss * self.value_loss_coef + action_loss -</div><div class="line">                 dist_entropy * self.entropy_coef).backward()</div><div class="line">                nn.utils.clip_grad_norm_(self.actor_critic.parameters(),</div><div class="line">                                         self.max_grad_norm)</div><div class="line">                self.optimizer.step()</div><div class="line"></div><div class="line">                ...</div><div class="line"></div><div class="line">        ...</div></pre></td></tr></table></figure>
+<p>表示RL algorithm的变量<code>agent</code>对应的类是<code>PPO</code>，由上可见，就是利用<code>rollouts</code>中的信息对<code>actor_critic</code>进行参数更新，更新的方式参照PPO的论文。</p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>至此，这份PPO代码的核心部分已经描述完毕。可见，代码的实现跟论文所说的还是有很多<strong>细节</strong>上的差异的，比如说对observation和reward的normalization，对return的计算，对advantage的normalization以及对gradient的clip等等。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/pytorch-ppo/" rel="tag"># pytorch-ppo</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/09/27/tech-vimrc/" rel="next" title="技术总结《配置Vim》">
+                <i class="fa fa-chevron-left"></i> 技术总结《配置Vim》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2021/12/11/tech-ubuntu-to-go/" rel="prev" title="技术总结《Ubuntu to Go》">
+                技术总结《Ubuntu to Go》 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Criss" />
+          <p class="site-author-name" itemprop="name">Criss</p>
+          <p class="site-description motion-element" itemprop="description">Talk is cheap</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Logical-framework"><span class="nav-number">2.</span> <span class="nav-text">Logical framework</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Source-code"><span class="nav-number">3.</span> <span class="nav-text">Source code</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#main"><span class="nav-number">3.1.</span> <span class="nav-text">main</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#envs"><span class="nav-number">3.2.</span> <span class="nav-text">envs</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#make-env"><span class="nav-number">3.2.1.</span> <span class="nav-text">make_env</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SubprocVecEnv"><span class="nav-number">3.2.2.</span> <span class="nav-text">SubprocVecEnv</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VecNormalize"><span class="nav-number">3.2.3.</span> <span class="nav-text">VecNormalize</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#actor-critic"><span class="nav-number">3.3.</span> <span class="nav-text">actor_critic</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rollouts"><span class="nav-number">3.4.</span> <span class="nav-text">rollouts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#agent"><span class="nav-number">3.5.</span> <span class="nav-text">agent</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">4.</span> <span class="nav-text">Summary</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Criss</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'meltycriss';
+      var disqus_identifier = '2018/10/09/source-ppo/';
+
+      var disqus_title = "源码阅读《PyTorch PPO》";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

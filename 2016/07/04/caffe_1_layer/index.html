@@ -1,0 +1,800 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="caffe学习," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Caffe基本框架，阅读和修改image_data_layer源码，使用Caffe的基本流程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Caffe学习：自定义数据读取">
+<meta property="og:url" content="http://yoursite.com/2016/07/04/caffe_1_layer/index.html">
+<meta property="og:site_name" content="陪你度过漫长岁月">
+<meta property="og:description" content="Caffe基本框架，阅读和修改image_data_layer源码，使用Caffe的基本流程">
+<meta property="og:updated_time" content="2024-08-13T16:03:47.848Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Caffe学习：自定义数据读取">
+<meta name="twitter:description" content="Caffe基本框架，阅读和修改image_data_layer源码，使用Caffe的基本流程">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/07/04/caffe_1_layer/"/>
+
+
+
+
+
+  <title> Caffe学习：自定义数据读取 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">陪你度过漫长岁月</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/04/caffe_1_layer/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Criss">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="陪你度过漫长岁月">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="陪你度过漫长岁月" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Caffe学习：自定义数据读取
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-07-04T19:23:42+08:00">
+                2016-07-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/caffe/" itemprop="url" rel="index">
+                    <span itemprop="name">caffe</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2016/07/04/caffe_1_layer/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/04/caffe_1_layer/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+              <div class="post-description">
+                  Caffe基本框架，阅读和修改image_data_layer源码，使用Caffe的基本流程
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Caffe架构"><a href="#Caffe架构" class="headerlink" title="Caffe架构"></a>Caffe架构</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>Caffe将层的实现（输入层，卷积层，全连接层），整体网络的定义（AlexNet，LeNet），以及超参数的定义（步长，迭代次数）解耦。用c++实现各层，并使用protocol buffer来定义网络和传入参数</p>
+<h3 id="基础构件"><a href="#基础构件" class="headerlink" title="基础构件"></a>基础构件</h3><p>.cpp文件实现一个个层，作为基础构件供上层调用</p>
+<ul>
+<li><strong>CAFFE_ROOT/include/caffe/layers</strong>: .hpp为层的头文件</li>
+<li><strong>CAFFE_ROOT/src/caffe/layers</strong>: .cpp为层的实现文件</li>
+<li><strong>CAFFE_ROOT/src/caffe/proto</strong>: .proto为传参数用的protocol buffer文件</li>
+</ul>
+<h3 id="自定义网络"><a href="#自定义网络" class="headerlink" title="自定义网络"></a>自定义网络</h3><ul>
+<li><strong>MODEL_ROOT/train_val.prototxt</strong>: 用作定义整体网络</li>
+<li><strong>MODEL_ROOT/solver.prototxt</strong>: 为网络传递超参数</li>
+<li><strong>MODEL_ROOT/train.sh</strong>: 开始训练的脚本</li>
+<li><strong>MODEL_ROOT/test.sh</strong>: 开始测试的脚本</li>
+</ul>
+<h2 id="自定义数据读取层"><a href="#自定义数据读取层" class="headerlink" title="自定义数据读取层"></a>自定义数据读取层</h2><h3 id="数据描述"><a href="#数据描述" class="headerlink" title="数据描述"></a>数据描述</h3><p><a href="http://mmcheng.net/msra10k/" target="_blank" rel="external">MSRA 10K Salient Object Database</a>。含有1w个数据，.jpg结尾的是原图，.png结尾的是标注了的图。用9k张作为训练集，用1k张作为测试集</p>
+<h3 id="image-data-layer总览"><a href="#image-data-layer总览" class="headerlink" title="image_data_layer总览"></a>image_data_layer总览</h3><p>image_data_layer实现了三个函数和调用了两个宏</p>
+<ul>
+<li><strong>DataLayerSetUp</strong>: 把容器的规格设置好（设好N, K, H, W)</li>
+<li><strong>ShuffleImages</strong>: 打乱顺序</li>
+<li><strong>load_batch</strong>: 真正把图片读入内存</li>
+<li><strong>INSTANTIATE_CLASS</strong>和<strong>REGISTER_LAYER_CLASS</strong>: 注册创建的层</li>
+</ul>
+<h3 id="DataLayerSetUp"><a href="#DataLayerSetUp" class="headerlink" title="DataLayerSetUp"></a>DataLayerSetUp</h3><ul>
+<li><p><strong>读取图片规格</strong>: 从protocol buffer中读取目标图片的k,h,w（有可能原图800*600，但想要256*256，这时就需要压缩）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> <span class="keyword">int</span> new_height = <span class="keyword">this</span>-&gt;layer_param_.image_data_param().new_height();</div><div class="line"><span class="keyword">const</span> <span class="keyword">int</span> new_width  = <span class="keyword">this</span>-&gt;layer_param_.image_data_param().new_width();</div><div class="line"><span class="keyword">const</span> <span class="keyword">bool</span> is_color  = <span class="keyword">this</span>-&gt;layer_param_.image_data_param().is_color();</div><div class="line"><span class="built_in">string</span> root_folder = <span class="keyword">this</span>-&gt;layer_param_.image_data_param().root_folder();</div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>读取图片列表</strong>: 从一个txt文件中读取图片名及其对应label，写进lines_</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">while</span> (<span class="built_in">std</span>::getline(infile, line)) &#123;</div><div class="line">  pos = line.find_last_of(<span class="string">' '</span>);</div><div class="line">  label = atoi(line.substr(pos + <span class="number">1</span>).c_str());</div><div class="line">  lines_.push_back(<span class="built_in">std</span>::make_pair(line.substr(<span class="number">0</span>, pos), label));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>shuffle &amp; skip</strong></p>
+</li>
+<li><strong>设置容器规格</strong>: 读一张图进来，并用它的规格来设置容器的规格<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Read an image, and use it to initialize the top blob.</span></div><div class="line">cv::Mat cv_img = ReadImageToCVMat(root_folder + lines_[lines_id_].first,</div><div class="line">                                  new_height, new_width, is_color);</div><div class="line">CHECK(cv_img.data) &lt;&lt; <span class="string">"Could not load "</span> &lt;&lt; lines_[lines_id_].first;</div><div class="line"><span class="comment">// Use data_transformer to infer the expected blob shape from a cv_image.</span></div><div class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; top_shape = <span class="keyword">this</span>-&gt;data_transformer_-&gt;InferBlobShape(cv_img);</div><div class="line"><span class="keyword">this</span>-&gt;transformed_data_.Reshape(top_shape);</div><div class="line"><span class="comment">// Reshape prefetch_data and top[0] according to the batch_size.</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">int</span> batch_size = <span class="keyword">this</span>-&gt;layer_param_.image_data_param().batch_size();</div><div class="line">CHECK_GT(batch_size, <span class="number">0</span>) &lt;&lt; <span class="string">"Positive batch size required"</span>;</div><div class="line">top_shape[<span class="number">0</span>] = batch_size;</div><div class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="keyword">this</span>-&gt;PREFETCH_COUNT; ++i) &#123;</div><div class="line">  <span class="keyword">this</span>-&gt;prefetch_[i].data_.Reshape(top_shape);</div><div class="line">&#125;</div><div class="line">top[<span class="number">0</span>]-&gt;Reshape(top_shape);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="load-batch"><a href="#load-batch" class="headerlink" title="load_batch"></a>load_batch</h3><ul>
+<li><strong>读取图片规格</strong></li>
+<li><strong>设置容器规格</strong></li>
+<li><strong>读入图片</strong>: prefetch_data为起始地址，offset根据容器的规格来求，然后在prefetch_data+offset的位置设置一个容器transformed_data_，并将图片写到容器里面<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">cv::Mat cv_img = ReadImageToCVMat(root_folder + lines_[lines_id_].first,</div><div class="line">    new_height, new_width, is_color);</div><div class="line">CHECK(cv_img.data) &lt;&lt; <span class="string">"Could not load "</span> &lt;&lt; lines_[lines_id_].first;</div><div class="line">read_time += timer.MicroSeconds();</div><div class="line">timer.Start();</div><div class="line"><span class="comment">// Apply transformations (mirror, crop...) to the image</span></div><div class="line"><span class="keyword">int</span> offset = batch-&gt;data_.offset(item_id);</div><div class="line"><span class="keyword">this</span>-&gt;transformed_data_.set_cpu_data(prefetch_data + offset);</div><div class="line"><span class="keyword">this</span>-&gt;data_transformer_-&gt;Transform(cv_img, &amp;(<span class="keyword">this</span>-&gt;transformed_data_));</div><div class="line">trans_time += timer.MicroSeconds();</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="自定义image-data-layer-disc"><a href="#自定义image-data-layer-disc" class="headerlink" title="自定义image_data_layer_disc"></a>自定义image_data_layer_disc</h3><p>复现的模型为<a href="http://ieeexplore.ieee.org/xpls/abs_all.jsp?arnumber=7372470&amp;tag=1" target="_blank" rel="external">DISC</a>，label不是一个简单的int，而是一张图片，所以要对数据输入层进行修改，来产生一个图片label</p>
+<ul>
+<li><strong>image_data_layer_disc.hpp</strong>: 修改lines_的定义，改成两个string的pair</li>
+<li><strong>image_data_layer_disc.cpp</strong>: 参考读入data的方式处理label</li>
+<li><strong>caffe.proto</strong>: 添加一个disc_image_data_para来添加关于label的参数</li>
+</ul>
+<h2 id="训练和测试"><a href="#训练和测试" class="headerlink" title="训练和测试"></a>训练和测试</h2><ul>
+<li><strong>train_val.prototxt</strong>: 赋值models里面的AlexNet，将data层改成我们的image_data_layer_disc，将loss层改成欧式距离，删除accuracy层</li>
+<li><strong>solver.prototxt</strong>: 网络指定为train_val.prototxt，学习率指定为1e-9</li>
+<li><p><strong>train.sh</strong>: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env sh</div><div class="line"></div><div class="line">./build/tools/caffe train --solver=models/disc/solver.prototxt</div></pre></td></tr></table></figure>
+</li>
+<li><p><strong>test.sh</strong>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">#!/usr/bin/env sh</div><div class="line"></div><div class="line">./build/tools/caffe.bin test -model=models/disc/train_val.prototxt -weights=models/disc/caffe_alexnet_train_iter_370000.caffemodel -gpu=1</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="Protocol-Buffer"><a href="#Protocol-Buffer" class="headerlink" title="Protocol Buffer"></a>Protocol Buffer</h2><p>给出一些介绍Protocol Buffer的网站</p>
+<ul>
+<li><a href="https://www.ibm.com/developerworks/cn/linux/l-cn-gpb/" target="_blank" rel="external">IMB</a></li>
+<li><a href="https://developers.google.com/protocol-buffers/docs/encoding#optional" target="_blank" rel="external">Google</a></li>
+<li><a href="http://www.iloveandroid.net/2015/10/08/studyPtorobuf/" target="_blank" rel="external">pb1</a></li>
+<li><a href="http://www.cnblogs.com/royenhome/archive/2010/10/29/1864860.html" target="_blank" rel="external">pb2</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/caffe学习/" rel="tag"># caffe学习</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/01/imagenet/" rel="next" title="论文笔记《ImageNet Classification with Deep Convolutional Neural Networks》">
+                <i class="fa fa-chevron-left"></i> 论文笔记《ImageNet Classification with Deep Convolutional Neural Networks》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/07/mindmap-jingjin/" rel="prev" title="思维导图《精进》">
+                思维导图《精进》 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Criss" />
+          <p class="site-author-name" itemprop="name">Criss</p>
+          <p class="site-description motion-element" itemprop="description">Talk is cheap</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Caffe架构"><span class="nav-number">1.</span> <span class="nav-text">Caffe架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基础构件"><span class="nav-number">1.2.</span> <span class="nav-text">基础构件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义网络"><span class="nav-number">1.3.</span> <span class="nav-text">自定义网络</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自定义数据读取层"><span class="nav-number">2.</span> <span class="nav-text">自定义数据读取层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据描述"><span class="nav-number">2.1.</span> <span class="nav-text">数据描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#image-data-layer总览"><span class="nav-number">2.2.</span> <span class="nav-text">image_data_layer总览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DataLayerSetUp"><span class="nav-number">2.3.</span> <span class="nav-text">DataLayerSetUp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#load-batch"><span class="nav-number">2.4.</span> <span class="nav-text">load_batch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义image-data-layer-disc"><span class="nav-number">2.5.</span> <span class="nav-text">自定义image_data_layer_disc</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#训练和测试"><span class="nav-number">3.</span> <span class="nav-text">训练和测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Protocol-Buffer"><span class="nav-number">4.</span> <span class="nav-text">Protocol Buffer</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Criss</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'meltycriss';
+      var disqus_identifier = '2016/07/04/caffe_1_layer/';
+
+      var disqus_title = "Caffe学习：自定义数据读取";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

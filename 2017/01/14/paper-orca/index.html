@@ -1,0 +1,905 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="ORCA," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="应用广泛的经典底层避障算法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记《Reciprocal n-body Collision Avoidance》">
+<meta property="og:url" content="http://yoursite.com/2017/01/14/paper-orca/index.html">
+<meta property="og:site_name" content="陪你度过漫长岁月">
+<meta property="og:description" content="应用广泛的经典底层避障算法">
+<meta property="og:image" content="http://yoursite.com/2017/01/14/paper-orca/time_interval.png">
+<meta property="og:image" content="http://yoursite.com/2017/01/14/paper-orca/orca_sol.png">
+<meta property="og:image" content="http://yoursite.com/2017/01/14/paper-orca/orca_app.png">
+<meta property="og:image" content="http://yoursite.com/2017/01/14/paper-orca/opt.png">
+<meta property="og:updated_time" content="2024-08-13T16:03:47.864Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="论文笔记《Reciprocal n-body Collision Avoidance》">
+<meta name="twitter:description" content="应用广泛的经典底层避障算法">
+<meta name="twitter:image" content="http://yoursite.com/2017/01/14/paper-orca/time_interval.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/01/14/paper-orca/"/>
+
+
+
+
+
+  <title> 论文笔记《Reciprocal n-body Collision Avoidance》 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">陪你度过漫长岁月</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/01/14/paper-orca/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Criss">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.gif">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="陪你度过漫长岁月">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="陪你度过漫长岁月" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                论文笔记《Reciprocal n-body Collision Avoidance》
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-01-14T21:41:51+08:00">
+                2017-01-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/论文笔记/" itemprop="url" rel="index">
+                    <span itemprop="name">论文笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/01/14/paper-orca/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2017/01/14/paper-orca/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+              <div class="post-description">
+                  应用广泛的经典底层避障算法
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>ORCA是经典的分布式底层避障算法，其任务是（对于A）：</p>
+<ul>
+<li><strong>输入</strong>：A与B的形状（$r_A$、$r_B$）、位置（$p_A$、$p_B$）、速度（$v_A$、$v_B$），以及A的偏好量（$v_A^{pref}$）和限制量（$v_A^{max}$）。</li>
+<li><strong>输出</strong>：不会发生碰撞的$v_A^{\prime}$。</li>
+<li><strong>特点</strong>：双方只要都采用ORCA，那么双方<strong>无需通信</strong>，<strong>分布式</strong>地求出来的$v_A^{\prime}$与$v_B^{\prime}$也不会发生碰撞。</li>
+</ul>
+<p>跟RVO一样，ORCA也是基于VO的，但更加实用，因为：</p>
+<ul>
+<li><strong>效果上</strong>：考虑了<strong>速度的大小</strong>，使得筛选粒度更细。不像VO和RVO只考虑速度方向。</li>
+<li><strong>效率上</strong>：求解过程基本只用到了<strong>线性规划</strong>，比较高效。不像VO和RVO有大量的非线性求解。</li>
+</ul>
+<h2 id="引入时间窗口-tau"><a href="#引入时间窗口-tau" class="headerlink" title="引入时间窗口$\tau$"></a>引入时间窗口$\tau$</h2><ol>
+<li>如下图(a)，在<strong>空间坐标</strong>上，有<ul>
+<li>位于$\bf{p_B}$，半径为$r_B$的$B$</li>
+<li>位于$\bf{p_A}$，半径为$r_A$的$A$</li>
+</ul>
+</li>
+<li>如下图(b)，引入时间$\tau$，将<strong>空间坐标</strong>转换为<strong>速度坐标</strong><ol>
+<li><strong>相对化空间坐标</strong>：将图(a)化为以$A$为原点，并将$A$化为质点</li>
+<li><strong>转为速度坐标</strong>：假设$B$静止，那么当$v_A * \tau$达到红色弧线时，$A$与$B$会发生碰撞，所以VO内，速度上限为$\frac{p_{弧线上的点}}{\tau}$，得到绿色弧线。</li>
+<li>至此得到$VO^{\tau}_{A|B}$，即绿色弧线与两射线组成的类扇形</li>
+</ol>
+</li>
+<li>如下图(c)，<strong>考虑$B$取的速度集合$V_B$</strong>，对假设$B$静止得到的$VO^{\tau}_{A|B}$求闵氏和，得$CA^{\tau}_{A|B}(V_B)$</li>
+</ol>
+<div style="width:800px; margin-left:auto; margin-right:auto;"><br>  <img src="/2017/01/14/paper-orca/time_interval.png" alt="时间窗口" title="时间窗口"><br></div>
+
+<p>下面给出各变量规范的数学定义：</p>
+<ul>
+<li><p>$D({\bf{p}},r)$：以$p$为圆心$r$为半径的圆<br>$$D({\bf{p}},r)=\{  {\bf{q}}  |  \| {\bf{q}} - {\bf{p}} \| &lt; r  \}$$</p>
+</li>
+<li><p>$VO^{\tau}_{A|B}$：绿色弧线和两条射线组成的类扇形<br>$$VO^{\tau}_{A|B} = \{  {\bf{v}}  |  \exists t \in [0, \tau], t {\bf{v}} \in D({\bf{p_B}} -{\bf{p_A}}, r_A+r_B)   \}$$</p>
+</li>
+<li><p>$CA^{\tau}_{A|B}(V_B)$：考虑$B$取速度集合$V_B$<br>$$CA^{\tau}_{A|B}(V_B)=\{  {\bf{v}}  |  {\bf{v}} \notin VO^{\tau}_{A|B} \oplus V_B  \}，　其中\oplus为闵氏和$$</p>
+</li>
+</ul>
+<p>至此，成功在VO的基础上引入了时间窗口，避障的时候不仅考虑<strong>速度方向</strong>，还考虑<strong>速度大小</strong>。</p>
+<p>p.s. 关于VO，闵氏和等内容可以参考上一篇文章<a href="/2017/01/13/paper-rvo/" title="论文笔记《Reciprocal Velocity Obstacles for Real-Time Multi-Agent Navigation》">论文笔记《Reciprocal Velocity Obstacles for Real-Time Multi-Agent Navigation》</a></p>
+<h2 id="ORCA定义"><a href="#ORCA定义" class="headerlink" title="ORCA定义"></a>ORCA定义</h2><p>ORCA全称为Optimal Reciprocal Collision Avoidance，含义就是在上述的$CA^{\tau}_{A|B}(V_B)$中选择最优的一个。</p>
+<p>论文对最优的定义大概可以理解为<strong>在$v^{opt}$附近的合法值越多越好</strong>，即为满足下列条件的$V_A$与$V_B$对：</p>
+<ul>
+<li><strong>Reciprocally collision avoiding</strong>：很好理解，在对方的$CA$内即可，即<br>$$V_A \subseteq CA^{\tau}_{A|B}(V_B) \land V_B \subseteq CA^{\tau}_{B|A}(V_A)$$</li>
+<li><strong>Reciprocally maximal</strong>：两个速度集是最大的不碰撞速度集，$V_A$或$V_B$都没有更多的避撞速度可选<br>$$V_A = CA^{\tau}_{A|B}(V_B) \land V_B = CA^{\tau}_{B|A}(V_A)$$</li>
+<li><strong>包含最多$v^{opt}$附近的避撞速度</strong>：$v^{opt}$是一个预设值，可以理解为偏好值，论文中的最优希望：<ul>
+<li>$v^{opt}$附近的值越多越好</li>
+</ul>
+</li>
+<li><strong>双方在各自$v^{opt}$附近的避撞速度数量一样</strong>：$A$和$B$各自有$v^{opt}_A$和$v^{opt}_B$，论文中的最优希望：<ul>
+<li>$A$求出来在$v^{opt}_A$附近的避撞速度的数量$n_A$</li>
+<li>$B$求出来在$v^{opt}_B$附近的避撞速度的数量$n_B$</li>
+<li>$n_A = n_B$</li>
+</ul>
+</li>
+</ul>
+<p>那么用数学语言来描述上面几条性质就是：<br>$$| ORCA^{\tau}_{A|B} \cap D({\bf{v^{opt}_A}}, r) | = | ORCA^{\tau}_{B|A} \cap D({\bf{v^{opt}_B}}, r) | \ge min(|V_A \cap D({\bf{v^{opt}_A}}, r)|, |V_B \cap D({\bf{v^{opt}_B}}, r)|)$$</p>
+<p>其中</p>
+<ul>
+<li>$ORCA^{\tau}_{A|B}$与$ORCA^{\tau}_{B|A}$：表示要求的最优速度集对，且满足reciprocally maximal，即<br>$$ORCA^{\tau}_{A|B} = CA^{\tau}_{A|B}(ORCA^{\tau}_{B|A}) \land ORCA^{\tau}_{B|A} = CA^{\tau}_{B|A}(ORCA^{\tau}_{A|B})$$</li>
+<li>$V_A$与$V_B$：表示任意reciprocally collision avoiding的速度集对，即<br>$$V_A \subseteq CA^{\tau}_{A|B}(V_B) \land V_B \subseteq CA^{\tau}_{B|A}(V_A)$$</li>
+<li>$r$：表示了“附近”的大小</li>
+<li>$D({\bf{v^{opt}}},r)$：表示$v^{opt}$附近的速度</li>
+</ul>
+<h2 id="ORCA求解"><a href="#ORCA求解" class="headerlink" title="ORCA求解"></a>ORCA求解</h2><p>论文采用构造法求解出满足上述性质的ORCA，下面先说怎么做，再说为什么这样做就能满足性质。</p>
+<p>下面从$A$的角度介绍构造过程（图示如下），这里假设$A$知道$\bf{v^{opt}_B}$</p>
+<ol>
+<li>求解<strong>相对速度</strong>${\bf{v^{opt}_A}}-{\bf{v^{opt}_B}}$</li>
+<li>求解$VO^{\tau}_{A|B}$<strong>边界上</strong>离相对速度${\bf{v^{opt}_A}}-{\bf{v^{opt}_B}}$<strong>最近的点</strong>$\bf{x}$</li>
+<li>求解从相对速度${\bf{v^{opt}_A}}-{\bf{v^{opt}_B}}$指向$\bf{x}$的向量$\bf{u}$</li>
+<li>求解与${\bf{v^{opt}_A}} + \frac{1}{2}{\bf{u}}$垂直的直线，将空间分为两个平面</li>
+<li>直线${\bf{v^{opt}_A}} + \frac{1}{2}{\bf{u}}$指向的平面即为所求$ORCA^{\tau}_{A|B}$</li>
+</ol>
+<div style="width:600px; margin-left:auto; margin-right:auto;"><br>  <img src="/2017/01/14/paper-orca/orca_sol.png" alt="ORCA求解" title="ORCA求解"><br></div>
+
+<p>下面逐条解释为什么符合性质：</p>
+<ul>
+<li><strong>Reciprocally collision avoiding</strong>：<ul>
+<li>由构造过程可知${\bf{v^{opt}_A}}-{\bf{v^{opt}_B}}+{\bf{u}}$不在$VO^{\tau}_{A|B}$内</li>
+<li>$A$取新速度${\bf{v^{opt}_A}} + \frac{1}{2}{\bf{u}}$</li>
+<li>$B$取新速度${\bf{v^{opt}_B}} - \frac{1}{2}{\bf{u}}$</li>
+<li>此时，相对速度为${\bf{v^{opt}_A}} + \frac{1}{2}{\bf{u}} - ({\bf{v^{opt}_B}} - \frac{1}{2}{\bf{u}}) = {\bf{v^{opt}_A}}-{\bf{v^{opt}_B}}+{\bf{u}}$，所以不在$VO^{\tau}_{A|B}$内</li>
+</ul>
+</li>
+<li><strong>Reciprocally maximal</strong>：<ul>
+<li>要证$ORCA^{\tau}_{A|B} = CA^{\tau}_{A|B}(ORCA^{\tau}_{B|A})$</li>
+<li>先求$CA^{\tau}_{A|B}(ORCA^{\tau}_{B|A})$：<ul>
+<li>回忆之前引入时间窗口$\tau$部分，构造$CA^{\tau}_{A|B}(ORCA^{\tau}_{B|A})$分两步<ol>
+<li>先将类扇形往${\bf{v^{opt}_B}}-\frac{1}{2}{\bf{u}}$移动</li>
+<li>沿直线$ORCA^{\tau}_{B|A}$方向扫</li>
+</ol>
+</li>
+<li>先将类扇形往$\bf{v^{opt}_B}$方向平移（此时，类扇形中的${\bf{v^{opt}_A}}-{\bf{v^{opt}_B}}$到了$\bf{v^{opt}_A}$，且$\bf{x}$与$\bf{v^{opt}_A}$的中点在直线$ORCA^{\tau}_{A|B}$上）</li>
+<li>别忘了还要将类扇形往$-{\frac{1}{2}\bf{u}}$方向移动（此时，$\bf{x}$刚好位于直线$ORCA^{\tau}_{A|B}$上）</li>
+<li>最后再沿直线$ORCA^{\tau}_{B|A}$方向扫，得$CA^{\tau}_{A|B}(ORCA^{\tau}_{B|A})$</li>
+</ul>
+</li>
+<li>而显然$CA^{\tau}_{A|B}(ORCA^{\tau}_{B|A})$正是$ORCA^{\tau}_{A|B}$</li>
+</ul>
+</li>
+<li><strong>包含最多$v^{opt}$附近的避撞速度</strong>：<ul>
+<li>选择了最近的$\bf{x}$进行“突围”，那“舍弃”的速度应该是最少的</li>
+<li>p.s. 这一点的证明不太严谨，有更好的证明欢迎留言探讨</li>
+</ul>
+</li>
+<li><strong>双方在各自$v^{opt}$附近的避撞速度数量一样</strong>：<ul>
+<li>$\bf{v^{opt}_A}$到$ORCA^{\tau}_{A|B}$的距离等于$\bf{v^{opt}_B}$到$ORCA^{\tau}_{B|A}$的距离</li>
+<li>定义“附近”用的是圆</li>
+</ul>
+</li>
+</ul>
+<p>最后给出ORCA的数学定义</p>
+<p>$$ORCA^{\tau}_{A|B} = \{  {\bf{v}}  |  ({\bf{v}} - ({\bf{v^{opt}_A}} + \frac{1}{2}{\bf{u}})) \cdot {\bf{n}} \ge 0   \}$$</p>
+<p>其中</p>
+<ul>
+<li>${\bf{u}}$是最小偏移<br>$${\bf{u}} = (\mathop{argmin}_{ {\bf{v}} \in \partial VO^{\tau}_{A|B}}{\| {\bf{v}} - ( {\bf{v^{opt}_A}} - {\bf{v^{opt}_B}} )  \|}) - ({\bf{v^{opt}_A}} - {\bf{v^{opt}_B}})$$</li>
+<li>${\bf{n}}$是跟${\bf{u}}$同向的法向量</li>
+<li>用${\bf{v}} \cdot {\bf{n}} \ge 0$来表示一个平面</li>
+</ul>
+<h2 id="ORCA基本用法"><a href="#ORCA基本用法" class="headerlink" title="ORCA基本用法"></a>ORCA基本用法</h2><ol>
+<li>对其他所有agents的$ORCA$求交（线性规划），再与自己可选速度求交集，得候选速度集$ORCA^{\tau}_{A}$<br>$$ORCA^{\tau}_{A}=D({\bf{0}}, {\bf{v^{max}_A}}) \cap \mathop{\bigcap}_{B \ne A}{ORCA^{\tau}_{A|B}}$$</li>
+<li>在候选集中求解跟自己偏好速度最近的一个速度${\bf{v^{new}_A}}$<br>$${\bf{v^{new}_A}} = \mathop{argmin}_{ {\bf{v}} \in ORCA^{\tau}_A}{\| {\bf{v}} - {\bf{v^{opt}_A}} \|}$$</li>
+</ol>
+<div style="width:600px; margin-left:auto; margin-right:auto;"><br>  <img src="/2017/01/14/paper-orca/orca_app.png" alt="ORCA基本用法" title="ORCA基本用法"><br></div>
+
+<p>可见ORCA的求解，就是在$ORCA^{\tau}_{A}$内，优化目标函数$\| {\bf{v}} - {\bf{v^{opt}_A}} \|$，所以计算效率很高。</p>
+<h2 id="关于-bf-v-opt-的选择"><a href="#关于-bf-v-opt-的选择" class="headerlink" title="关于${\bf{v^{opt}}}$的选择"></a>关于${\bf{v^{opt}}}$的选择</h2><p>为方便阐述，假设${\bf{v_A}} = {\bf{0}}$，这样$ORCA^{\tau}_{A|B}$就只是从原点移$\frac{1}{2}{\bf{u}}$</p>
+<p>讨论${\bf{v^{opt}}}$的选择跟$ORCA^{\tau}_{A}$的关系</p>
+<ul>
+<li>${\bf{0}}$<ul>
+<li>一定有解，如下图(c)。很好理解，这相当于假设了别人都静止，那只要自己也静止，必然有解。</li>
+<li>密集情况下容易死锁，因为这样相当于只考虑位置信息，而不考虑速度信息</li>
+</ul>
+</li>
+<li>${\bf{v^{pref}}}$<ul>
+<li>密集情况下容易无解，如下图(b)。因为一般来说${\bf{v^{pref}}}$都比较大</li>
+<li>而且实际上也不可能观察得到别人的${\bf{v^{pref}}}$</li>
+</ul>
+</li>
+<li>${\bf{v_{curr}}}$<ul>
+<li>两者的折中</li>
+</ul>
+</li>
+</ul>
+<div style="width:800px; margin-left:auto; margin-right:auto;"><br>  <img src="/2017/01/14/paper-orca/opt.png" alt="opt选择" title="opt选择"><br></div>
+
+<h2 id="无解情况的处理"><a href="#无解情况的处理" class="headerlink" title="无解情况的处理"></a>无解情况的处理</h2><p>基本思路跟线性代数里面的投影差不多：选择离合法速度最近的速度</p>
+<p>$$ {\bf{v^{new}_{A}}} = \mathop{argmin}_{ {\bf{v}} \in D({\bf{0}}, {\bf{v^{max}_A}})} {\mathop{max}_{B \ne A}{ d_{A|B}({\bf{v}})}} $$</p>
+<p>下面慢慢拆分来看</p>
+<ol>
+<li>$d_{A|B}({\bf{v}})$：表示${\bf{v}}$的“违规”程度。定义为${\bf{v}}$到ORCA分割线的有向距离，${\bf{v}}$在ORCA外则取正</li>
+<li>${\mathop{max}_{B \ne A}{ d_{A|B}({\bf{v}})}}$：对每个速度${\bf{v}}$，取“违规”最多的值作为它的“违规程度”</li>
+<li>$\mathop{argmin}_{ {\bf{v}} \in D({\bf{0}}, {\bf{v^{max}_A}})} {\mathop{max}_{B \ne A}{ d_{A|B}({\bf{v}})}}$：在可行速度内，求”违规程度”最小的速度</li>
+</ol>
+<h2 id="收获"><a href="#收获" class="headerlink" title="收获"></a>收获</h2><ul>
+<li>改进可以从以下角度考虑：<ul>
+<li><strong>效果</strong>：只考虑了方向，没有考虑速度</li>
+<li><strong>效率</strong>：计算复杂度</li>
+</ul>
+</li>
+</ul>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ul>
+<li><a href="http://gamma.cs.unc.edu/ORCA/publications/ORCA.pdf" target="_blank" rel="external">Reciprocal n-body Collision Avoidance</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ORCA/" rel="tag"># ORCA</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/13/paper-rvo/" rel="next" title="论文笔记《Reciprocal Velocity Obstacles for Real-Time Multi-Agent Navigation》">
+                <i class="fa fa-chevron-left"></i> 论文笔记《Reciprocal Velocity Obstacles for Real-Time Multi-Agent Navigation》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/09/09/note-essence-of-linear-algrbra/" rel="prev" title="课程笔记《线性代数的本质》">
+                课程笔记《线性代数的本质》 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="Criss" />
+          <p class="site-author-name" itemprop="name">Criss</p>
+          <p class="site-description motion-element" itemprop="description">Talk is cheap</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#引入时间窗口-tau"><span class="nav-number">2.</span> <span class="nav-text">引入时间窗口$\tau$</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ORCA定义"><span class="nav-number">3.</span> <span class="nav-text">ORCA定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ORCA求解"><span class="nav-number">4.</span> <span class="nav-text">ORCA求解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ORCA基本用法"><span class="nav-number">5.</span> <span class="nav-text">ORCA基本用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关于-bf-v-opt-的选择"><span class="nav-number">6.</span> <span class="nav-text">关于${\bf{v^{opt}}}$的选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#无解情况的处理"><span class="nav-number">7.</span> <span class="nav-text">无解情况的处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#收获"><span class="nav-number">8.</span> <span class="nav-text">收获</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">9.</span> <span class="nav-text">References</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Criss</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+    <script type="text/javascript">
+      var disqus_shortname = 'meltycriss';
+      var disqus_identifier = '2017/01/14/paper-orca/';
+
+      var disqus_title = "论文笔记《Reciprocal n-body Collision Avoidance》";
+
+
+      function run_disqus_script(disqus_script) {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+      }
+
+      run_disqus_script('count.js');
+
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
+      
+
+    </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({"tex2jax":{"inlineMath":[["$","$"],["\\(","\\)"]],"skipTags":["script","noscript","style","textarea","pre","code"],"processEscapes":true},"TeX":{"equationNumbers":{"autoNumber":"AMS"}}});
+</script>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+      all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+  });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<!-- End: Injected MathJax -->
+<!-- hexo-inject:end -->
+  
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
