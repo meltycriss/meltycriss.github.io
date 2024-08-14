@@ -73,7 +73,21 @@ categories:
 
 - motivation：允许`const`成员函数修改的成员变量
 
+## `pImpl`
 
+- motivation
+    - 完全隐藏实现细节
+    - 避免修改成员变量引起头文件变化
+- 具体来说，就是
+    - 在类的`private`里面前向声明一个`Impl`类
+    - 成员变量只保留一个指向`Impl`类的`unique_ptr`
+
+## `compare_exchange`
+
+- motivation：解决多线程编程时，读到的值在要用的时候可能已经被修改的问题，主要用于条件赋值，否则直接用`store`就好了
+- 思路就是在用的时候再验一下货。具体来说，就是搞了一个包含比较和赋值这两个指令的原子操作，只有当`self`跟`expected`相等的时候，`self`才会被赋值为`target`
+- 这个也被叫做CAS(Compare and Swap)，属于无锁编程的概念。
+- 可以参考[这个blog](https://mk.woa.com/q/295415/answer/123484?kmref=vkm_push)
 
 <!-- ```mermaid
 ---
@@ -109,29 +123,45 @@ sequenceDiagram
     participant GM as CarlaGameModeBase.cpp
     participant GI as CarlaGameInstance.cpp
     participant NGN as CarlaEngine.cpp <br> (Define tick logic)
-    participant SVR as CarlaServer.cpp <br> (RPC Server)
+    participant OBS as WorldObserver.cpp <br> (Hold actor states)
     participant EPI as CarlaEpisode.cpp <br> (Hold UE APIs)
+    participant SVR as CarlaServer.cpp <br> (RPC Server)
+    participant CLIENT as RPC Client
 
     UE ->> GM : DefaultEngine.ini
     UE ->> GI : DefaultEngine.ini
     UE ->> GM : InitGame
     GM ->> GI : NotifyInitGame
     GI ->> NGN : NotifyInitGame
-    NGN ->> UE : Register OnPreTick  <br> FWorldDelegates::OnWorldTickStart.AddRaw(this, &FCarlaEngine::OnPreTick);
+    NGN ->> UE : Register OnPreTick and OnPostTick
     NGN ->> SVR : Start RPC Server
     Note over SVR: Initialize RPC Server <br> FCarlaServer::FPimpl::BindActions()
+    SVR -->> NGN : return BroadcastStream
+    NGN ->> OBS : Bind stream <br> WorldObserver.SetStream(BroadcastStream);
 
     UE ->> GM : BeginPlay
     GM ->> EPI : Episode->InitializeAtBeginPlay()
     GM ->> GI : NotifyBeginEpisode(UCarlaEpisode &)
-    GI ->> NGN : NotifyBeginEpisode(UCarlaEpisode &)
-    NGN ->> SVR : NotifyBeginEpisode(UCarlaEpisode &)
+    GI ->> NGN : NotifyBeginEpisode
+    NGN ->> SVR : NotifyBeginEpisode
     SVR ->> EPI : Bind <br> Pimpl->Episode = &Episode
 
     loop UE Tick
-    UE ->> NGN : Tick <br> Call registered OnPreTick
-    NGN ->> SVR : Server.RunSome(1u)
-    SVR ->> EPI : Call Episode's methods <br> according to RPC requests
+        rect rgb(191, 223, 255)
+            note over UE, GM : Client to Server communication
+            UE ->> NGN : Call registered OnPreTick
+            NGN ->> SVR : Server.RunSome(1u)
+            CLIENT ->> SVR : RPC requests
+            SVR ->> EPI : Call Episode's methods
+        end
+
+        rect rgb(191, 223, 255)
+            note over UE, GM : Server to Client communication
+            UE ->> NGN : Call registered OnPostTick
+            NGN ->> OBS : WorldObserver.BroadcastTick
+            OBS ->> SVR : SerializeAndSend
+            SVR ->> CLIENT : Broadcast
+        end
     end
 ```
 
@@ -147,6 +177,7 @@ sequenceDiagram
     participant EPI as detail/Episode.cpp
     participant EPI_PXY as detail/EpisodeProxy.cpp <br> (Util Class to wrap detail/Simulator.cpp, help handling different pointer types)
     participant RPC_CLIENT as detail/Client.cpp <br> (RPC Client)
+    participant SVR as RPC Server in UE
 
     CLIENT ->> SIM : Client():_simulator(new detail::Simulator(host, port, worker_threads)
     SIM ->> RPC_CLIENT : Simulator():_client(host, port, worker_threads)
@@ -158,6 +189,9 @@ sequenceDiagram
         rect rgb(200, 150, 255)
             note right of CLIENT: Simulator::GetCurrentEpisode()
             SIM ->> EPI : _episode = std::make_shared<Episode>(_client, std::weak_ptr<Simulator>(shared_from_this()));
+            SIM ->> EPI : _episode->Listen();
+            EPI ->> RPC_CLIENT : Register callback to update EpisodeState(snapshot): _client.SubscribeToStream
+            note over RPC_CLIENT :     _pimpl->streaming_client.Subscribe
             SIM ->> EPI_PXY : epi_pxy = EpisodeProxy{shared_from_this()}
             note over EPI_PXY: EpisodeProxy():_simulator(std::move(simulator))
             SIM -->> CLIENT : return epi_pxy
@@ -167,13 +201,22 @@ sequenceDiagram
         note over WORLD: World():_episode(std::move(episode))
     end
 
-    rect rgb(191, 223, 255)
-        note right of WORLD: World::SpawnActor() {_episode.Lock()->SpawnActor}
+    rect rgb(191, 223, 255)   
+        note over WORLD: Client to Server communication 
+        note right of WORLD: e.g., World::SpawnActor() {_episode.Lock()->SpawnActor}
         WORLD ->> EPI_PXY : _episode.Lock()
         EPI_PXY -->> WORLD : return Load(_simulator) <br> Load(ptr) {return ptr.load() / ptr.lock()}
         WORLD ->> SIM : _episode.Lock().SpawnActor
         SIM ->> RPC_CLIENT : _client.SpawnActor
-        note over RPC_CLIENT: _pimpl->CallAndWait<rpc::Actor>("spawn_actor", description, transform);
+        RPC_CLIENT ->> SVR: _pimpl->CallAndWait<rpc::Actor>("spawn_actor", description, transform);
+    end
+
+    rect rgb(191, 223, 255)
+    note over EPI: Server to Client communication
+    loop
+    SVR ->> RPC_CLIENT : Stream broadcast
+    RPC_CLIENT ->> EPI : Call registered callback
+    end
     end
 ```
 
