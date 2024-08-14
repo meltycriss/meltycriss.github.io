@@ -98,7 +98,7 @@ flowchart LR
     C_CPP[C++ Carla Client]
     C_RPC[C++ RPC Client]
     S_RPC[C++ RPC Server]
-    S_PLUGIN[C++ Calar UE5 Plugin]
+    S_PLUGIN[C++ Carla UE5 Plugin]
     UE[UE]
     PY --- |boost python| C_CPP
     subgraph "Client (LibCarla)"
