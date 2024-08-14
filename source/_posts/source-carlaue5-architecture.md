@@ -11,9 +11,71 @@ categories:
 
 # 前言
 
+总结了一下CarlaUE5的整体代码架构，该总结基于以下代码：
+
+- repo: https://github.com/carla-simulator/carla.git
+- branch: `ue5-dev`
+- commit: `141a8a2`
+
 # 整体架构
 
-```mermaid
+<!-- <div style="width:400px; margin-left:auto; margin-right:auto;" > -->
+<div style="max-width: 100%; margin: 0 auto;">
+  {% asset_img carla.png 整体架构 %}
+</div>
+
+# Server架构
+
+<!-- <div style="width:auto; margin-left:auto; margin-right:auto;" > -->
+<div style="max-width: 100%; margin: 0 auto;">
+  {% asset_img server.png Server架构 %}
+</div>
+
+# Client架构
+
+<!-- <div style="width:400px; margin-left:auto; margin-right:auto;" > -->
+<div style="max-width: 100%; margin: 0 auto;">
+  {% asset_img client.png Client架构 %}
+</div>
+
+# PythonAPI
+
+<!-- <div style="width:400px; margin-left:auto; margin-right:auto;" > -->
+<div style="max-width: 100%; margin: 0 auto;">
+  {% asset_img pythonapi.png PythonAPI架构 %}
+</div>
+
+# 一些C++知识点
+
+## `weak_ptr`
+
+- motivation：只有`shared_ptr`的话会出现循环引用的问题
+- 具体来说，就是搞一个阉割版的，不会影响计数的“智能指针”，也就是`weak_ptr`了
+- `weak_ptr`不能直接用，只能先通过`.lock()`提级（构造）为`shared_ptr`之后再用
+- [这个blog](https://blog.csdn.net/qq_38410730/article/details/105903979)和[这个blog](https://blog.csdn.net/Xiejingfa/article/details/50772571)讲解得挺好的
+
+## `atomic`
+
+- motivation：针对变量的高效线程安全读写工具
+- 相比`lock`, `mutex`这些要跟跟内核打交道（有用户态和内核态的切换开销）的多线程工具，`atomic`属于硬件指令集的工具，效率更高
+- 对于`atomic<int> ai;`，需要调用`ai.load()`和`ai.store(1)`进行读写
+- 又由于编译器会对代码的实际执行顺序进行优化，`atomic`提供了一些指令去控制代码的执行顺序，具体可以参考[这个blog](https://www.cnblogs.com/kekec/p/14470150.html)
+
+## `enable_shared_from_this`
+
+- motivation：使得成员函数使用`shared_ptr<T>(this)`成为可能。假如没有额外支持的话，成员函数直接裸使用`shared_ptr<T>(this)`会导致`this`被析构两次
+- 核心要做的事情就是使得对象知道管理自己的`shared_ptr`是什么。具体来说：
+    - `esft`是个模板类，我们需要继承他。这个类里有一个`weak_ptr`成员，语意是指向管理本对象的`shared_ptr`；同时会提供一个`shared_from_this`方法，去调用`weak_ptr.lock()`
+    - 在调用`make_shared`的时候，会调用`dynamic_cast`来检查当前要构造的对象是否继承自`esft`，假如是，就会将其`weak_ptr`对象指向`shared_ptr`
+- 关于这部分，可以参考[这个blog](https://blog.csdn.net/caoshangpa/article/details/79392878)
+
+## `mutable`
+
+- motivation：允许`const`成员函数修改的成员变量
+
+
+
+<!-- ```mermaid
 ---
 title: Carla Architecture
 ---
@@ -36,8 +98,6 @@ flowchart LR
     S_PLUGIN --- UE
     end
 ```
-
-# Server架构
 
 ```mermaid
 ---
@@ -74,8 +134,6 @@ sequenceDiagram
     SVR ->> EPI : Call Episode's methods <br> according to RPC requests
     end
 ```
-
-# Client架构
 
 ```mermaid
 ---
@@ -119,8 +177,6 @@ sequenceDiagram
     end
 ```
 
-# PythonAPI
-
 ```mermaid
 ---
 title: Python API
@@ -143,28 +199,4 @@ flowchart LR
     CPP --- WORLD
     CPP --- ...
     end
-```
-
-# 一些C++知识点
-
-## `weak_ptr`
-
-- motivation：只有`shared_ptr`的话会出现循环引用的问题
-- 具体来说，就是搞一个阉割版的，不会影响计数的“智能指针”，也就是`weak_ptr`了
-- `weak_ptr`不能直接用，只能先通过`.lock()`提级（构造）为`shared_ptr`之后再用
-- [这个blog](https://blog.csdn.net/qq_38410730/article/details/105903979)和[这个blog](https://blog.csdn.net/Xiejingfa/article/details/50772571)讲解得挺好的
-
-## `atomic`
-
-- motivation：针对变量的高效线程安全读写工具
-- 相比`lock`, `mutex`这些要跟跟内核打交道（有用户态和内核态的切换开销）的多线程工具，`atomic`属于硬件指令集的工具，效率更高
-- 对于`atomic<int> ai;`，需要调用`ai.load()`和`ai.store(1)`进行读写
-- 又由于编译器会对代码的实际执行顺序进行优化，`atomic`提供了一些指令去控制代码的执行顺序，具体可以参考[这个blog](https://www.cnblogs.com/kekec/p/14470150.html)
-
-## `enable_shared_from_this`
-
-- motivation：使得成员函数使用`shared_ptr<T>(this)`成为可能。假如没有额外支持的话，成员函数直接裸使用`shared_ptr<T>(this)`会导致`this`被析构两次
-- 核心要做的事情就是使得对象知道管理自己的`shared_ptr`是什么。具体来说：
-    - `esft`是个模板类，我们需要继承他。这个类里有一个`weak_ptr`成员，语意是指向管理本对象的`shared_ptr`；同时会提供一个`shared_from_this`方法，去调用`weak_ptr.lock()`
-    - 在调用`make_shared`的时候，会调用`dynamic_cast`来检查当前要构造的对象是否继承自`esft`，假如是，就会将其`weak_ptr`对象指向`shared_ptr`
-- 关于这部分，可以参考[这个blog](https://blog.csdn.net/caoshangpa/article/details/79392878)
+``` -->
