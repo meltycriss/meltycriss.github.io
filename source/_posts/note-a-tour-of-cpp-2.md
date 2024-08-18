@@ -17,6 +17,22 @@ description:
 
 ---
 
+# 第十三章：常用工具
+
+- 智能指针
+    - 用`make_shared`会比`shared_ptr{new}`高效：一次性把对象和ctrl block的内存申请了，节省了一次内存分配
+    - 没事尽量用`unique_ptr`，因为`shared_ptr`会导致lifetime不好预测（考虑多线程场景）
+    - assign`unique_ptr`时，需要显式地写`move`来将参数转为右值，以此调用`move construct/assign`
+- `span`：将裸数组指针和数组大小包在一起，以减少越界，以及支持`for (auto x: p)`
+- 有一些对齐C的工具，比如`basic_string`
+- alternatives三剑客
+    - `variant`：多选一
+    - `optional`：支持空
+    - `any`：支持所有，`string& s = any_cast<string>(m);`
+- allocator：一些内存分配方法，主要是有个例子说明了默认的`new`有可能带来内存碎片的问题
+- `function`：统一了所有可以用`()`来调用的东西，比如普通函数，成员函数，函数对象，lambda
+    - 如果需要重载的话，要用`overloaded`
+
 # 第十五章：并发编程
 
 - 多线程基础：创建线程/入参/返回结果
@@ -33,7 +49,16 @@ description:
         - motivation：实现`if (condition) lck.acquire()`，之所以不能直接这么写，是因为判断lck.acquire的时候，condition可能已经不满足了
         - 一种暴力的做法就是`do {lck.release(); sleep; lck.acquire()} while (!condition)`，但这样子会一直吃cpu
         - `condition_variable`的实现跟这个其实是类似的，只不过没有通过`while`去重试，而是依赖事件触发（OS提供的线程原语）
+            - 也不知道为啥`condition_variable`不直接实现成以一个`mutex`作为参数来构造，然后直接consumer调`cv.wait`，producer调`cv.lck`+`cv.notify`，估计还是为了更加灵活
 ```c++
+class Message { // object to be communicated
+    // ...
+};
+
+queue<Message> mqueue; // the queue of messages
+condition_variable mcond; // the var iable communicating events
+mutex mmutex; // for synchronizing access to mcond
+
 void consumer()
 {
     unique_lock lck {mmutex}; // acquire mmutex
