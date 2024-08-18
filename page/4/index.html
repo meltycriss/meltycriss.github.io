@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="caffe配置," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -84,16 +84,15 @@
 
 
 
-<meta name="description" content="Ubuntu 16.04配置Caffe环境">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Ubuntu 16.04配置Caffe环境">
-<meta property="og:url" content="https://www.meltycriss.com/2016/06/28/caffe-configuration/index.html">
+<meta name="description" content="Talk is cheap">
+<meta property="og:type" content="website">
+<meta property="og:title" content="陪你度过漫长岁月">
+<meta property="og:url" content="https://www.meltycriss.com/page/4/index.html">
 <meta property="og:site_name" content="陪你度过漫长岁月">
-<meta property="og:description" content="Ubuntu 16.04配置Caffe环境">
-<meta property="og:updated_time" content="2024-08-13T16:03:47.848Z">
+<meta property="og:description" content="Talk is cheap">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Ubuntu 16.04配置Caffe环境">
-<meta name="twitter:description" content="Ubuntu 16.04配置Caffe环境">
+<meta name="twitter:title" content="陪你度过漫长岁月">
+<meta name="twitter:description" content="Talk is cheap">
 
 
 
@@ -121,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="https://www.meltycriss.com/2016/06/28/caffe-configuration/"/>
+  <link rel="canonical" href="https://www.meltycriss.com/page/4/"/>
 
 
 
 
 
-  <title> Ubuntu 16.04配置Caffe环境 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title> 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -156,7 +155,9 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left page-post-detail ">
+  <div class="container one-collumn sidebar-position-left 
+   page-home 
+ ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -237,9 +238,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-expand">
     
+      
 
   
 
@@ -272,7 +273,10 @@
             
             
               
-                Ubuntu 16.04配置Caffe环境
+                
+                <a class="post-title-link" href="/2016/06/28/caffe-configuration/" itemprop="url">
+                  Ubuntu 16.04配置Caffe环境
+                </a>
               
             
           </h1>
@@ -341,16 +345,7 @@
           
 
           
-            <span class="post-meta-divider">|</span>
-            <span class="page-pv"><i class="fa fa-file-o"></i>
-            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
-            </span>
-          
 
-          
-              <div class="post-description">
-                  Ubuntu 16.04配置Caffe环境
-              </div>
           
 
         </div>
@@ -364,115 +359,49 @@
       
 
       
-        <h2 id="基本配置流程"><a href="#基本配置流程" class="headerlink" title="基本配置流程"></a>基本配置流程</h2><ol>
-<li><p>从官网克隆到本地 <a href="https://github.com/BVLC/caffe" target="_blank" rel="external">caffe官网</a></p>
-<blockquote>
-<p>git clone git@github.com:BVLC/caffe.git</p>
-</blockquote>
-</li>
-<li><p>按照官方教程安装 <a href="http://caffe.berkeleyvision.org/installation.html" target="_blank" rel="external">官方安装教程</a> </p>
-<ol>
-<li><p>配置依赖文件 <a href="http://caffe.berkeleyvision.org/install_apt.html" target="_blank" rel="external">依赖文件</a></p>
-<blockquote>
-<p>sudo apt-get install libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev protobuf-compiler<br>sudo apt-get install –no-install-recommends libboost-all-dev<br>sudo apt-get install libatlas-base-dev<br>sudo apt-get install libgflags-dev libgoogle-glog-dev liblmdb-dev</p>
-</blockquote>
-</li>
-<li><p>编译(<strong>默认含GPU，可以用-j4多核加速编译</strong>) <a href="http://caffe.berkeleyvision.org/installation.html#compilation" target="_blank" rel="external">编译</a></p>
-<blockquote>
-<p>cp Makefile.config.example Makefile.config<br>make all<br>make test<br>make runtest</p>
-</blockquote>
-</li>
-</ol>
-</li>
-</ol>
-<h2 id="踩过的坑"><a href="#踩过的坑" class="headerlink" title="踩过的坑"></a>踩过的坑</h2><ul>
-<li><p><strong>can’t find hdf5.h when build caffe</strong>: 用以下sh改变include路径 <a href="https://github.com/NVIDIA/DIGITS/issues/156" target="_blank" rel="external">source</a></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line"># manipulate header path, before building caffe on debian jessie</div><div class="line"># usage:</div><div class="line"># 1. cd root of caffe</div><div class="line"># 2. bash &lt;this_script&gt;</div><div class="line"># 3. build</div><div class="line"></div><div class="line"># transformations :</div><div class="line">#  #include &quot;hdf5/serial/hdf5.h&quot; -&gt; #include &quot;hdf5/serial/hdf5.h&quot;</div><div class="line">#  #include &quot;hdf5_hl.h&quot; -&gt; #include &quot;hdf5/serial/hdf5_hl.h&quot;</div><div class="line"></div><div class="line">find . -type f -exec sed -i -e &apos;s^&quot;hdf5.h&quot;^&quot;hdf5/serial/hdf5.h&quot;^g&apos; -e &apos;s^&quot;hdf5_hl.h&quot;^&quot;hdf5/serial/hdf5_hl.h&quot;^g&apos; &apos;&#123;&#125;&apos; \;</div></pre></td></tr></table></figure>
-</li>
-<li><p><strong>/usr/bin/ld: cannot find -lhdf5_hl</strong>: 修改文件名字 <a href="https://github.com/NVIDIA/DIGITS/issues/156" target="_blank" rel="external">source</a>  </p>
-<blockquote>
-<p>cd /usr/lib/x86_64-linux-gnu<br>sudo ln -s libhdf5_serial.so.10.1.0 libhdf5.so<br>sudo ln -s libhdf5_serial_hl.so.10.0.2 libhdf5_hl.so</p>
-</blockquote>
-</li>
-<li><p><strong>‘memcpy’ was not declared in this scope</strong>: 修改Makefile.config <a href="https://github.com/BVLC/caffe/issues/4046" target="_blank" rel="external">source</a></p>
-<blockquote>
-<p>将Makefile.config中的<br>NVCCFLAGS += -ccbin=$(CXX) -Xcompiler -fPIC $(COMMON_FLAGS)<br>修改为<br>NVCCFLAGS += -D_FORCE_INLINES -ccbin=$(CXX) -Xcompiler -fPIC $(COMMON_FLAGS)  </p>
-</blockquote>
-</li>
-<li><p><strong>安装Cuda</strong>:  Cuda官网只有给出14.04和15.04的Cuda7.5版本，但实际上可以直接通过apt-get获取16.04的Cuda7.5</p>
-<ol>
-<li>安装cuda<blockquote>
-<p>sudo apt-get install nvidia-cuda-toolkit</p>
-</blockquote>
-</li>
-<li>修改caffe/Makefile.config中的CUDA_DIR</li>
-</ol>
-</li>
-</ul>
-<ul>
-<li><strong>安装显卡驱动</strong>: 系统设置-软件和更新-附加驱动，选择最新的显卡驱动，应用。<ul>
-<li>安装驱动后屏幕无法调节亮度的解决办法 <a href="http://askubuntu.com/questions/76081/brightness-not-working-after-installing-nvidia-driver" target="_blank" rel="external">调节亮度</a></li>
-<li>使用<code>nvidia-setttings</code>查看gpu使用情况</li>
-</ul>
-</li>
-</ul>
-
+        
+          Ubuntu 16.04配置Caffe环境
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2016/06/28/caffe-configuration/">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
       
     </div>
 
     <div>
       
-        
-
-      
     </div>
 
     <div>
-      
-        
-
       
     </div>
 
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/caffe配置/" rel="tag"># caffe配置</a>
-          
-        </div>
+
       
 
       
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/07/01/imagenet/" rel="prev" title="论文笔记《ImageNet Classification with Deep Convolutional Neural Networks》">
-                论文笔记《ImageNet Classification with Deep Convolutional Neural Networks》 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
       
-
-      
+        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
+    
+  </section>
 
-    <div class="post-spread">
-      
-    </div>
-  </div>
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+  </nav>
+
 
           
           </div>
@@ -480,17 +409,6 @@
 
 
           
-  <div class="comments" id="comments">
-    
-      <div id="disqus_thread">
-        <noscript>
-          Please enable JavaScript to view the
-          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
-        </noscript>
-      </div>
-    
-  </div>
-
 
         </div>
         
@@ -510,17 +428,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview sidebar-panel">
+      <section class="site-overview sidebar-panel sidebar-panel-active">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -576,22 +485,6 @@
 
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本配置流程"><span class="nav-number">1.</span> <span class="nav-text">基本配置流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#踩过的坑"><span class="nav-number">2.</span> <span class="nav-text">踩过的坑</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
     </div>
@@ -706,10 +599,6 @@
   
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
-
-
 
   
 
@@ -726,9 +615,9 @@
 
     <script type="text/javascript">
       var disqus_shortname = 'meltycriss';
-      var disqus_identifier = '2016/06/28/caffe-configuration/';
+      var disqus_identifier = 'page/4/index.html';
 
-      var disqus_title = "Ubuntu 16.04配置Caffe环境";
+      var disqus_title = "";
 
 
       function run_disqus_script(disqus_script) {
@@ -741,13 +630,6 @@
 
       run_disqus_script('count.js');
 
-      
-        var disqus_config = function () {
-            this.page.url = disqus_url;
-            this.page.identifier = disqus_identifier;
-            this.page.title = disqus_title;
-        };
-        run_disqus_script('embed.js');
       
 
     </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->
