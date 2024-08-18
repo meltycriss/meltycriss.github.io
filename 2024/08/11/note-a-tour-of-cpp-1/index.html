@@ -90,7 +90,7 @@
 <meta property="og:url" content="https://www.meltycriss.com/2024/08/11/note-a-tour-of-cpp-1/index.html">
 <meta property="og:site_name" content="陪你度过漫长岁月">
 <meta property="og:description" content="记录一下看C++之父写的《A Tour of C++》时，感到比较有意思的点">
-<meta property="og:updated_time" content="2024-08-13T16:03:47.848Z">
+<meta property="og:updated_time" content="2024-08-18T13:12:34.380Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="学习笔记《A Tour of C++》上">
 <meta name="twitter:description" content="记录一下看C++之父写的《A Tour of C++》时，感到比较有意思的点">
@@ -466,7 +466,7 @@
 <li>[✓] 关于<code>move</code><ul>
 <li>motivation是<strong>根据copy时src的类型，采用不同的copy方法，以优化copy的性能</strong>。</li>
 <li>具体来说，<strong>按照src后续是否还会被使用</strong>，copy可以分成两种。针对不需要被使用的情况（比如说函数的值返回），有机会可以优化copy的性能（比如一种方法是偷，即不需要再申请内存，直接将dst的资源指针指向src的资源）。</li>
-<li>为了标识后续不会再被使用的src，引入了右指引用<code>&amp;&amp;</code>这种类型，其实也可以把右值引用这个拗口的名字直接理解成<strong>将死类型</strong>（这个称呼不是我首创的，但是忘了在哪看到过这个说法，没有引用敬请原谅），当然这只是方便理解，取名叫右指引用还是有他的道理的，只是初看容易懵<ul>
+<li>为了标识后续不会再被使用的src，引入了右值引用<code>&amp;&amp;</code>这种类型，其实也可以把右值引用这个拗口的名字直接理解成<strong>将死类型</strong>（这个称呼不是我首创的，但是忘了在哪看到过这个说法，没有引用敬请原谅），当然这只是方便理解，取名叫右值引用还是有他的道理的，只是初看容易懵<ul>
 <li>右值：将死类型可以出现在等号右边，但等号右边的不一定是将死类型</li>
 <li>引用：因为我们要偷他的东西，必然是引用</li>
 </ul>
@@ -479,8 +479,9 @@
 <li>那啥类型会是将死类型呢<ul>
 <li><code>std::move</code>转换过的</li>
 <li>各种无名变量，比如函数返回值</li>
-<li>值得一提的是类型为右指引用的形参仍然是左指，要想以右指引用使用这个形参还得用<code>std::move</code><ul>
+<li>值得一提的是类型为右值引用的形参仍然是左值，要想以右值引用使用这个形参还得用<code>std::move</code><ul>
 <li>估计是为了保留调用常规函数的可能性</li>
+<li>这也是为什么需要完美转发，因为过了一层就全变成左值了。再提一嘴，模板的类型推导里面，会将<code>int</code>和<code>int&amp;&amp;</code>统一合并为右值来处理，合理性在于<code>int</code>本身就没有存在的必要</li>
 </ul>
 </li>
 </ul>
@@ -544,7 +545,7 @@
 <li><p>泛型编程的思路：先搞几个concrete，通过一直问哪些东西可以放宽限制的方法进行抽象，别一上来就想着复用，好的泛型编程会导致模板实例化出来的代码跟你要手写的代码是一样的</p>
 </li>
 <li>变长参数模板：默认的方法是通过拆解为<code>&lt;first, left&gt;</code>递归去做的，C++17支持fold expression一把梭</li>
-<li>模板类里面支持再定义模板函数，配合<code>std::forward</code>（保留左指右指）很好用</li>
+<li>模板类里面支持再定义模板函数，配合<code>std::forward</code>（保留左值右值）很好用</li>
 <li>使用concept的好处在于<ul>
 <li>提早报错期（不需要等实例化后才知道错）</li>
 <li>更好的报错（实例化之后的报错很奇怪）</li>

@@ -91,7 +91,7 @@
 <meta property="og:site_name" content="陪你度过漫长岁月">
 <meta property="og:description" content="后面几章的笔记">
 <meta property="og:image" content="https://www.meltycriss.com/2024/08/18/note-a-tour-of-cpp-2/future_promise.png">
-<meta property="og:updated_time" content="2024-08-18T10:52:30.924Z">
+<meta property="og:updated_time" content="2024-08-18T14:22:39.204Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="学习笔记《A Tour of C++》下">
 <meta name="twitter:description" content="后面几章的笔记">
@@ -369,6 +369,27 @@
         <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>书接上回（<a href="/2024/08/11/note-a-tour-of-cpp-1/" title="学习笔记《A Tour of C++》上">学习笔记《A Tour of C++》上</a>），这一部分由于都是一些STL库的使用，感觉通读意义不大，所以采取了一种哪里感兴趣就读哪里的方式。这也就导致了这篇文章不会像上一篇那么规整，属于会长期更新的类型。</p>
 <p>下面开始正文部分。老规矩，正文部分按照书的顺序展开，通过[✓]标记有较大实战价值的内容。</p>
 <hr>
+<h1 id="第十三章：常用工具"><a href="#第十三章：常用工具" class="headerlink" title="第十三章：常用工具"></a>第十三章：常用工具</h1><ul>
+<li>智能指针<ul>
+<li>用<code>make_shared</code>会比<code>shared_ptr{new}</code>高效：节省了一次内存分配</li>
+<li>没事尽量用<code>unique_ptr</code>，因为<code>shared_ptr</code>会导致lifetime不好预测（考虑多线程场景）</li>
+<li>assign<code>unique_ptr</code>时，需要显式地写<code>move</code>来将参数转为右值，以此调用<code>move construct/assign</code></li>
+</ul>
+</li>
+<li><code>span</code>：将裸数组指针和数组大小包在一起，以减少越界，以及支持<code>for (auto x: p)</code></li>
+<li>有一些对齐C的工具，比如<code>basic_string</code></li>
+<li>alternatives三剑客<ul>
+<li><code>variant</code>：多选一</li>
+<li><code>optional</code>：支持空</li>
+<li><code>any</code>：支持所有，<code>string&amp; s = any_cast&lt;string&gt;(m);</code></li>
+</ul>
+</li>
+<li>allocator：一些内存分配方法，主要是有个例子说明了默认的<code>new</code>有可能带来内存碎片的问题</li>
+<li><code>function</code>：统一了所有可以用<code>()</code>来调用的东西，比如普通函数，成员函数，函数对象，lambda<ul>
+<li>如果需要重载的话，要用<code>overloaded</code></li>
+</ul>
+</li>
+</ul>
 <h1 id="第十五章：并发编程"><a href="#第十五章：并发编程" class="headerlink" title="第十五章：并发编程"></a>第十五章：并发编程</h1><ul>
 <li>多线程基础：创建线程/入参/返回结果<ul>
 <li>对于变长参数，需要使用<code>ref(object)</code>来指定是pass by reference</li>
@@ -390,7 +411,10 @@
 <li>有条件锁<ul>
 <li>motivation：实现<code>if (condition) lck.acquire()</code>，之所以不能直接这么写，是因为判断lck.acquire的时候，condition可能已经不满足了</li>
 <li>一种暴力的做法就是<code>do {lck.release(); sleep; lck.acquire()} while (!condition)</code>，但这样子会一直吃cpu</li>
-<li><code>condition_variable</code>的实现跟这个其实是类似的，只不过没有通过<code>while</code>去重试，而是依赖事件触发（OS提供的线程原语）<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">consumer</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    unique_lock lck &#123;mmutex&#125;; <span class="comment">// acquire mmutex</span></div><div class="line">    <span class="comment">// release lck and wait;</span></div><div class="line">    <span class="comment">// re-acquire lck upon wakeup</span></div><div class="line">    <span class="comment">// don’t wake up unless mqueue is non-empty</span></div><div class="line">    mcond.wait(lck,[] &#123; <span class="keyword">return</span> !mqueue.empty(); &#125;);</div><div class="line"></div><div class="line">    <span class="comment">// do sth</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">producer</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    Message m;</div><div class="line">    <span class="comment">// ... fill the message ...</span></div><div class="line">    scoped_lock lck &#123;mmutex&#125;; <span class="comment">// protect operations</span></div><div class="line">    mqueue.push(m);</div><div class="line">    mcond.notify_one(); <span class="comment">// notify</span></div><div class="line">&#125; <span class="comment">// release lock (at end of scope)</span></div></pre></td></tr></table></figure>
+<li><code>condition_variable</code>的实现跟这个其实是类似的，只不过没有通过<code>while</code>去重试，而是依赖事件触发（OS提供的线程原语）<ul>
+<li>也不知道为啥<code>condition_variable</code>不直接实现成以一个<code>mutex</code>作为参数来构造，然后直接consumer调<code>cv.wait</code>，producer调<code>cv.lck</code>+<code>cv.notify</code>，估计还是为了更加灵活<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">class</span> Message &#123; <span class="comment">// object to be communicated</span></div><div class="line">    <span class="comment">// ...</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="built_in">queue</span>&lt;Message&gt; mqueue; <span class="comment">// the queue of messages</span></div><div class="line">condition_variable mcond; <span class="comment">// the var iable communicating events</span></div><div class="line">mutex mmutex; <span class="comment">// for synchronizing access to mcond</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">consumer</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    unique_lock lck &#123;mmutex&#125;; <span class="comment">// acquire mmutex</span></div><div class="line">    <span class="comment">// release lck and wait;</span></div><div class="line">    <span class="comment">// re-acquire lck upon wakeup</span></div><div class="line">    <span class="comment">// don’t wake up unless mqueue is non-empty</span></div><div class="line">    mcond.wait(lck,[] &#123; <span class="keyword">return</span> !mqueue.empty(); &#125;);</div><div class="line"></div><div class="line">    <span class="comment">// do sth</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">producer</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    Message m;</div><div class="line">    <span class="comment">// ... fill the message ...</span></div><div class="line">    scoped_lock lck &#123;mmutex&#125;; <span class="comment">// protect operations</span></div><div class="line">    mqueue.push(m);</div><div class="line">    mcond.notify_one(); <span class="comment">// notify</span></div><div class="line">&#125; <span class="comment">// release lock (at end of scope)</span></div></pre></td></tr></table></figure>
+</li>
+</ul>
 </li>
 </ul>
 </li>
@@ -590,7 +614,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第十五章：并发编程"><span class="nav-number">2.</span> <span class="nav-text">第十五章：并发编程</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第十三章：常用工具"><span class="nav-number">2.</span> <span class="nav-text">第十三章：常用工具</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第十五章：并发编程"><span class="nav-number">3.</span> <span class="nav-text">第十五章：并发编程</span></a></li></ol></div>
             
 
           </div>
