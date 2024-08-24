@@ -91,7 +91,7 @@
 <meta property="og:site_name" content="陪你度过漫长岁月">
 <meta property="og:description" content="后面几章的笔记">
 <meta property="og:image" content="https://www.meltycriss.com/2024/08/18/note-a-tour-of-cpp-2/future_promise.png">
-<meta property="og:updated_time" content="2024-08-18T14:22:39.204Z">
+<meta property="og:updated_time" content="2024-08-18T14:24:23.780Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="学习笔记《A Tour of C++》下">
 <meta name="twitter:description" content="后面几章的笔记">
@@ -371,7 +371,7 @@
 <hr>
 <h1 id="第十三章：常用工具"><a href="#第十三章：常用工具" class="headerlink" title="第十三章：常用工具"></a>第十三章：常用工具</h1><ul>
 <li>智能指针<ul>
-<li>用<code>make_shared</code>会比<code>shared_ptr{new}</code>高效：节省了一次内存分配</li>
+<li>用<code>make_shared</code>会比<code>shared_ptr{new}</code>高效：一次性把对象和ctrl block的内存申请了，节省了一次内存分配</li>
 <li>没事尽量用<code>unique_ptr</code>，因为<code>shared_ptr</code>会导致lifetime不好预测（考虑多线程场景）</li>
 <li>assign<code>unique_ptr</code>时，需要显式地写<code>move</code>来将参数转为右值，以此调用<code>move construct/assign</code></li>
 </ul>
@@ -486,6 +486,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2024/08/24/source-carlaue5-vehicle-1/" rel="prev" title="源码阅读《CarlaUE5 UChaosVehicleMovementComponent关键调用链》">
+                源码阅读《CarlaUE5 UChaosVehicleMovementComponent关键调用链》 <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -561,7 +565,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">31</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
