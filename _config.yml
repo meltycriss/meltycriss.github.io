@@ -76,8 +76,8 @@ deploy:
 
 disqus_shortname: meltycriss
 
-exclude:
-  - "about/*"
+# exclude:
+#   - "about/*"
 
 sitemap:
   path: sitemap.xml
