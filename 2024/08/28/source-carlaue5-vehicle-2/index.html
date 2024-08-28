@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="CarlaUE5," />
 
 
 
@@ -84,15 +84,19 @@
 
 
 
-<meta name="description" content="Talk is cheap">
-<meta property="og:type" content="website">
-<meta property="og:title" content="陪你度过漫长岁月">
-<meta property="og:url" content="https://www.meltycriss.com/page/4/index.html">
+<meta name="description" content="总结CarlaUE5里面，关于创建车辆（SpawnActor）和控制车辆（ApplyControl）的相关代码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="源码阅读《CarlaUE5 创建车辆（SpawnActor）和控制车辆（ApplyControl）》">
+<meta property="og:url" content="https://www.meltycriss.com/2024/08/28/source-carlaue5-vehicle-2/index.html">
 <meta property="og:site_name" content="陪你度过漫长岁月">
-<meta property="og:description" content="Talk is cheap">
+<meta property="og:description" content="总结CarlaUE5里面，关于创建车辆（SpawnActor）和控制车辆（ApplyControl）的相关代码">
+<meta property="og:image" content="https://www.meltycriss.com/2024/08/28/source-carlaue5-vehicle-2/spawn_actor.png">
+<meta property="og:image" content="https://www.meltycriss.com/2024/08/28/source-carlaue5-vehicle-2/apply_control.png">
+<meta property="og:updated_time" content="2024-08-28T16:18:31.226Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="陪你度过漫长岁月">
-<meta name="twitter:description" content="Talk is cheap">
+<meta name="twitter:title" content="源码阅读《CarlaUE5 创建车辆（SpawnActor）和控制车辆（ApplyControl）》">
+<meta name="twitter:description" content="总结CarlaUE5里面，关于创建车辆（SpawnActor）和控制车辆（ApplyControl）的相关代码">
+<meta name="twitter:image" content="https://www.meltycriss.com/2024/08/28/source-carlaue5-vehicle-2/spawn_actor.png">
 
 
 
@@ -120,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="https://www.meltycriss.com/page/4/"/>
+  <link rel="canonical" href="https://www.meltycriss.com/2024/08/28/source-carlaue5-vehicle-2/"/>
 
 
 
 
 
-  <title> 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+  <title> 源码阅读《CarlaUE5 创建车辆（SpawnActor）和控制车辆（ApplyControl）》 | 陪你度过漫长岁月 </title><!-- hexo-inject:begin --><!-- hexo-inject:end -->
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -155,9 +159,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -238,9 +240,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -249,7 +251,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://www.meltycriss.com/2016/07/04/caffe_1_layer/">
+  <link itemprop="mainEntityOfPage" href="https://www.meltycriss.com/2024/08/28/source-carlaue5-vehicle-2/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Criss">
@@ -273,10 +275,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/07/04/caffe_1_layer/" itemprop="url">
-                  Caffe学习：自定义数据读取
-                </a>
+                源码阅读《CarlaUE5 创建车辆（SpawnActor）和控制车辆（ApplyControl）》
               
             
           </h1>
@@ -291,8 +290,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-07-04T19:23:42+08:00">
-                2016-07-04
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2024-08-28T23:49:16+08:00">
+                2024-08-28
               </time>
             
 
@@ -314,8 +313,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/caffe/" itemprop="url" rel="index">
-                    <span itemprop="name">caffe</span>
+                  <a href="/categories/源码阅读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码阅读</span>
                   </a>
                 </span>
 
@@ -332,8 +331,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/07/04/caffe_1_layer/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/04/caffe_1_layer/" itemprop="commentCount"></span>
+                <a href="/2024/08/28/source-carlaue5-vehicle-2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2024/08/28/source-carlaue5-vehicle-2/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -345,162 +344,16 @@
           
 
           
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          Caffe基本框架，阅读和修改image_data_layer源码，使用Caffe的基本流程
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2016/07/04/caffe_1_layer/">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://www.meltycriss.com/2016/07/01/imagenet/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Criss">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.gif">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="陪你度过漫长岁月">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="陪你度过漫长岁月" src="">
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/07/01/imagenet/" itemprop="url">
-                  论文笔记《ImageNet Classification with Deep Convolutional Neural Networks》
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-07-01T19:10:02+08:00">
-                2016-07-01
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/论文笔记/" itemprop="url" rel="index">
-                    <span itemprop="name">论文笔记</span>
-                  </a>
-                </span>
-
-                
-                
-              
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
             </span>
           
 
           
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2016/07/01/imagenet/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/07/01/imagenet/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-
+              <div class="post-description">
+                  总结CarlaUE5里面，关于创建车辆（SpawnActor）和控制车辆（ApplyControl）的相关代码
+              </div>
           
 
         </div>
@@ -514,204 +367,89 @@
       
 
       
-        
-          AlexNet介绍，包括其架构，如何加快收敛，怎样加强泛化能力以及如何评估模型
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2016/07/01/imagenet/">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>书接上回，（<a href="/2024/08/24/source-carlaue5-vehicle-1/" title="源码阅读《CarlaUE5 UChaosVehicleMovementComponent关键调用链》">源码阅读《CarlaUE5 UChaosVehicleMovementComponent关键调用链》</a>）总结完<code>MovementComponent</code>是怎么被调用的，相当于把核心部分的调用总结了，本文就把头尾都补充一下：</p>
+<ul>
+<li>头：<ul>
+<li>哪里控制可以创建什么车辆</li>
+<li>当client起<code>spawn_actor</code>请求时，车辆是怎么创建出来的</li>
+</ul>
+</li>
+<li>尾：<ul>
+<li>当client发起<code>apply_control</code>请求时，控制指令是怎么驱动车辆的</li>
+<li>client又是如何拿到更新后的车辆信息的</li>
+</ul>
+</li>
+</ul>
+<p>加上本文的内容之后，关于CarlaUE5的整体框架总结应该算是比较完整了：</p>
+<ul>
+<li>关于构建客户端：<a href="/2024/08/04/tech-windows-ue5-carla-build/" title="技术总结《在Win11上构建UE5版本的Carla》">技术总结《在Win11上构建UE5版本的Carla》</a></li>
+<li>关于整体框架：<a href="/2024/08/13/source-carlaue5-architecture/" title="源码阅读《CarlaUE5整体架构》">源码阅读《CarlaUE5整体架构》</a></li>
+<li>关于控制移动的<code>MovementComponent</code>：<a href="/2024/08/24/source-carlaue5-vehicle-1/" title="源码阅读《CarlaUE5 UChaosVehicleMovementComponent关键调用链》">源码阅读《CarlaUE5 UChaosVehicleMovementComponent关键调用链》</a></li>
+<li>关于创建车辆以及控制车辆：本文</li>
+</ul>
+<p>下面就先介绍头，再介绍尾：</p>
+<h1 id="创建车辆SpawnActor"><a href="#创建车辆SpawnActor" class="headerlink" title="创建车辆SpawnActor"></a>创建车辆<code>SpawnActor</code></h1><p>这一部分比较有意思的地方在于有不少东西是通过UE Editor的UI界面去控制的（标有blueprint的模块）</p>
+<div style="max-width: 100%; margin: 0 auto;"><br>  <img src="/2024/08/28/source-carlaue5-vehicle-2/spawn_actor.png" alt="创建车辆" title="创建车辆"><br></div>
+
+<h1 id="控制车辆ApplyControl"><a href="#控制车辆ApplyControl" class="headerlink" title="控制车辆ApplyControl"></a>控制车辆<code>ApplyControl</code></h1><p>这一部分比较有意思的地方在于车辆（<code>UpdatedPrimitive</code>）是直接在simulator被更新的，我一开始还以为simulator只负责计算，实际更新会在别的地方</p>
+<div style="max-width: 100%; margin: 0 auto;"><br>  <img src="/2024/08/28/source-carlaue5-vehicle-2/apply_control.png" alt="控制车辆" title="控制车辆"><br></div>
+
       
     </div>
 
     <div>
       
+        
+
+      
     </div>
 
     <div>
+      
+        
+
       
     </div>
 
 
     <footer class="post-footer">
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://www.meltycriss.com/2016/06/28/caffe-configuration/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Criss">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.gif">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="陪你度过漫长岁月">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="陪你度过漫长岁月" src="">
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/06/28/caffe-configuration/" itemprop="url">
-                  Ubuntu 16.04配置Caffe环境
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-06-28T19:21:42+08:00">
-                2016-06-28
-              </time>
-            
-
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/环境配置/" itemprop="url" rel="index">
-                    <span itemprop="name">环境配置</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
+            <a href="/tags/CarlaUE5/" rel="tag"># CarlaUE5</a>
           
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/2016/06/28/caffe-configuration/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2016/06/28/caffe-configuration/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          Ubuntu 16.04配置Caffe环境
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2016/06/28/caffe-configuration/">
-              阅读全文 &raquo;
-            </a>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2024/08/24/source-carlaue5-vehicle-1/" rel="next" title="源码阅读《CarlaUE5 UChaosVehicleMovementComponent关键调用链》">
+                <i class="fa fa-chevron-left"></i> 源码阅读《CarlaUE5 UChaosVehicleMovementComponent关键调用链》
+              </a>
+            
           </div>
-          <!--/noindex-->
-        
-      
-    </div>
 
-    <div>
-      
-    </div>
+          <span class="post-nav-divider"></span>
 
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
-  </nav>
-
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
           
           </div>
@@ -719,6 +457,17 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -738,8 +487,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel sidebar-panel-active">
+      <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.gif"
@@ -795,6 +553,22 @@
 
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#创建车辆SpawnActor"><span class="nav-number">2.</span> <span class="nav-text">创建车辆SpawnActor</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#控制车辆ApplyControl"><span class="nav-number">3.</span> <span class="nav-text">控制车辆ApplyControl</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
     </div>
@@ -909,6 +683,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
 
   
 
@@ -925,9 +703,9 @@
 
     <script type="text/javascript">
       var disqus_shortname = 'meltycriss';
-      var disqus_identifier = 'page/4/index.html';
+      var disqus_identifier = '2024/08/28/source-carlaue5-vehicle-2/';
 
-      var disqus_title = "";
+      var disqus_title = "源码阅读《CarlaUE5 创建车辆（SpawnActor）和控制车辆（ApplyControl）》";
 
 
       function run_disqus_script(disqus_script) {
@@ -940,6 +718,13 @@
 
       run_disqus_script('count.js');
 
+      
+        var disqus_config = function () {
+            this.page.url = disqus_url;
+            this.page.identifier = disqus_identifier;
+            this.page.title = disqus_title;
+        };
+        run_disqus_script('embed.js');
       
 
     </script><!-- hexo-inject:begin --><!-- Begin: Injected MathJax -->

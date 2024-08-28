@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.meltycriss.com/2024/08/28/source-carlaue5-vehicle-2/</loc>
+    
+    <lastmod>2024-08-28T16:18:31.226Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.meltycriss.com/2024/08/24/source-carlaue5-vehicle-1/</loc>
     
     <lastmod>2024-08-24T15:24:35.695Z</lastmod>
@@ -30,13 +37,6 @@
   </url>
   
   <url>
-    <loc>https://www.meltycriss.com/2021/12/29/tech-ubuntu-bluetooth/</loc>
-    
-    <lastmod>2024-08-13T16:03:47.884Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.meltycriss.com/2018/02/03/summary-rl-drl/</loc>
     
     <lastmod>2024-08-13T16:03:47.884Z</lastmod>
@@ -45,6 +45,13 @@
   
   <url>
     <loc>https://www.meltycriss.com/2018/03/26/tech-gym/</loc>
+    
+    <lastmod>2024-08-13T16:03:47.884Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.meltycriss.com/2021/12/29/tech-ubuntu-bluetooth/</loc>
     
     <lastmod>2024-08-13T16:03:47.884Z</lastmod>
     
@@ -163,13 +170,6 @@
   </url>
   
   <url>
-    <loc>https://www.meltycriss.com/2016/07/22/caffe_3_s2vt_data_process/</loc>
-    
-    <lastmod>2024-08-13T16:03:47.848Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.meltycriss.com/2016/07/04/caffe_1_layer/</loc>
     
     <lastmod>2024-08-13T16:03:47.848Z</lastmod>
@@ -184,6 +184,13 @@
   </url>
   
   <url>
+    <loc>https://www.meltycriss.com/2016/07/22/caffe_3_s2vt_data_process/</loc>
+    
+    <lastmod>2024-08-13T16:03:47.848Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.meltycriss.com/2016/08/05/caffe_4_lstm/</loc>
     
     <lastmod>2024-08-13T16:03:47.848Z</lastmod>
@@ -191,14 +198,14 @@
   </url>
   
   <url>
-    <loc>https://www.meltycriss.com/2016/07/01/imagenet/</loc>
+    <loc>https://www.meltycriss.com/2016/08/17/caffe_5_s2vt_captioner/</loc>
     
     <lastmod>2024-08-13T16:03:47.848Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://www.meltycriss.com/2016/08/17/caffe_5_s2vt_captioner/</loc>
+    <loc>https://www.meltycriss.com/2016/07/01/imagenet/</loc>
     
     <lastmod>2024-08-13T16:03:47.848Z</lastmod>
     
