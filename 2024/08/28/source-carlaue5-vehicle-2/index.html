@@ -92,7 +92,7 @@
 <meta property="og:description" content="总结CarlaUE5里面，关于创建车辆（SpawnActor）和控制车辆（ApplyControl）的相关代码">
 <meta property="og:image" content="https://www.meltycriss.com/2024/08/28/source-carlaue5-vehicle-2/spawn_actor.png">
 <meta property="og:image" content="https://www.meltycriss.com/2024/08/28/source-carlaue5-vehicle-2/apply_control.png">
-<meta property="og:updated_time" content="2024-08-28T16:18:31.226Z">
+<meta property="og:updated_time" content="2024-08-28T16:23:52.110Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="源码阅读《CarlaUE5 创建车辆（SpawnActor）和控制车辆（ApplyControl）》">
 <meta name="twitter:description" content="总结CarlaUE5里面，关于创建车辆（SpawnActor）和控制车辆（ApplyControl）的相关代码">
@@ -394,6 +394,26 @@
 <h1 id="控制车辆ApplyControl"><a href="#控制车辆ApplyControl" class="headerlink" title="控制车辆ApplyControl"></a>控制车辆<code>ApplyControl</code></h1><p>这一部分比较有意思的地方在于车辆（<code>UpdatedPrimitive</code>）是直接在simulator被更新的，我一开始还以为simulator只负责计算，实际更新会在别的地方</p>
 <div style="max-width: 100%; margin: 0 auto;"><br>  <img src="/2024/08/28/source-carlaue5-vehicle-2/apply_control.png" alt="控制车辆" title="控制车辆"><br></div>
 
+
+<!-- <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">sequenceDiagram</div><div class="line">    autonumber</div><div class="line">    participant OBS as WorldObserver.cpp</div><div class="line">    participant CAR as CarlaWheeledVehicle.cpp</div><div class="line">    participant MC as DefaultMovementComponent.cpp</div><div class="line">    participant MGR as ChaosVehicleManager.cpp</div><div class="line">    participant VMC as UChaosVehicleMovementComponent</div><div class="line">    participant CB as ChaosVehicleManagerAsyncCallback.cpp</div><div class="line">    participant SIM as UChaosVehicleSimulation</div><div class="line"></div><div class="line">    note over CAR : In constructor</div><div class="line">    CAR -&gt;&gt; MC : UDefaultMovementComponent::&lt;br&gt;CreateDefaultMovementComponent(this)</div><div class="line">    note over CAR : In ApplyVehicleControl (called by CarlaServer.cpp): &lt;br&gt; InputControl.Control = Control;</div><div class="line">    note over CAR : In FlushVehicleControl (called by WheeledVehicleAIController.cpp)</div><div class="line">    CAR -&gt;&gt; MC : BaseMovementComponent-&gt;ProcessControl(&lt;br&gt;InputControl.Control)</div><div class="line"></div><div class="line">    MC -&gt;&gt; VMC : MovementComponent-&gt;SetThrottleInput(Control.Throttle)</div><div class="line">    VMC -&gt;&gt; CB : Update : PASS ANY INUTS TO &lt;br&gt;THE PHYSICS THREAD SIMULATION</div><div class="line">    CB -&gt;&gt; SIM : TickVehicle(UWorld* WorldIn, &lt;br&gt;float DeltaTime, &lt;br&gt;const FChaosVehicleAsyncInput&amp; InputData, &lt;br&gt;FChaosVehicleAsyncOutput&amp; OutputData, &lt;br&gt;Chaos::FRigidBodyHandle_Internal* Handle)</div><div class="line">    note over CB : IMPORTANT KNOWLEDGE!!!: &lt;br&gt; 1. In WheeledVehiclePawn.cpp: &lt;br&gt; VehicleMovementComponent-&gt;UpdatedComponent = Mesh (chassis of vehicle) &lt;br&gt; 2. UpdatedPrimitive ~= UpdatedComponent ~= RootComponent &lt;br&gt; 3. Chaos::FRigidBodyHandle_Internal* Handle &lt;br&gt; = UpdatedPrimitive-&gt;GetBodyInstance() &lt;br&gt; -&gt;ActorHandle-&gt;GetPhysicsThreadAPI()</div><div class="line"></div><div class="line">    note over SIM : state + input -- physics dynamics -&gt; forces + output</div><div class="line">    CB -&gt;&gt; SIM : ApplyDeferredForces(Chaos::FRigidBodyHandle_Internal* Handle)</div><div class="line">    note over SIM : Apply computed forces to rigid bodies (Chaos::FRigidBodyHandle_Internal*)</div><div class="line">    VMC -&gt;&gt; CB : ParallelUpdate : Access the async output data &lt;br&gt;from the Physics Thread</div><div class="line">    MGR -&gt;&gt; VMC : PreTickGT</div><div class="line">    note over VMC : Update FVehicleState	VehicleState from FBodyInstance* (sth like Chaos::FRigidBodyHandle_Internal*)</div><div class="line">    </div><div class="line">    OBS -&gt;&gt; CAR : BroadcastTick &lt;br&gt; FWorldObserver_Serialize</div><div class="line">    note over CAR : Get vehicle states from RootComponent or members</div></pre></td></tr></table></figure>
+<p>```mermaid<br>sequenceDiagram<br>    autonumber<br>    participant SVR as CarlaServer.cpp<br>    participant ED as UE Editor<br>    participant GM as CarlaGameMode (blueprint)<br>    participant VF as VehicleFactory (blueprint)<br>    participant LC as BP_Lincoln2024 (blueprint)<br>    participant GMB as CarlaGameModeBase.cpp<br>    participant EPI as CarlaEpisode.cpp<br>    participant AD as ActorDispatcher.cpp</p>
+<pre><code>GM -&gt;&gt; GMB : Derive from
+ED -&gt;&gt; GM : Set ActorFactories &lt;br&gt; (include VehicleFactory)
+ED -&gt;&gt; VF : Set Vehicles
+VF -&gt;&gt; LC : Add concrete vehicle
+note over LC : AIControllerClass is set to &lt;br&gt; WheeledVehicleAIController
+
+note right of GMB : ACarlaGameModeBase::InitGame &lt;br&gt; SpawnActorFactories
+GMB -&gt;&gt; EPI : Episode-&gt;RegisterActorFactory(*Factory)
+EPI -&gt;&gt; AD : ActorDispatcher-&gt;Bind(ActorFactory)
+note over AD : Bind(Definition, ActorFactory.SpawnActor) &lt;br&gt; SpawnFunctions.Emplace(Functor)
+
+note over SVR : spawn_actor RPC request
+SVR -&gt;&gt; EPI : Episode-&gt;SpawnActorWithInfo(Transform, std::move(Description))
+EPI -&gt;&gt; AD : ActorDispatcher-&gt;SpawnActor(&lt;br&gt;LocalTransform, thisActorDescription, DesiredId)
+note over AD : FActorSpawnResult Result = &lt;br&gt; SpawnFunctions[Description.UId - 1](Transform, Description)
+</code></pre><p>``` –&gt;</p>
+-->
       
     </div>
 
@@ -434,6 +454,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2024/09/22/tech-dying-relu/" rel="prev" title="技术总结《PyTorch排查Dying ReLU问题》">
+                技术总结《PyTorch排查Dying ReLU问题》 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -510,7 +534,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">33</span>
+                <span class="site-state-item-count">34</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -528,7 +552,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">43</span>
+                <span class="site-state-item-count">45</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
