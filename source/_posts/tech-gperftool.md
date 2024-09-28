@@ -99,7 +99,7 @@ HEAPPROFILE=./heap_profile ./test
 输出的`heap_profile.pdf`长这个样子，可以很清晰地看到`heap_leak`中没被释放的内存，而不包含`heap_normal`中被正常释放的内存：
 
 <div style="width:600px; margin-left:auto; margin-right:auto;" >
-  {% asset_img heap_profile.pdf heap_profile.pdf %}
+  {% asset_img heap_profile.png heap_profile.pdf %}
 </div>
 
 ---
@@ -167,7 +167,7 @@ CPUPROFILE=./cpu_profile ./test
 输出的`cpu_profile.pdf`长这个样子：
 
 <div style="width:600px; margin-left:auto; margin-right:auto;" >
-  {% asset_img cpu_profile.pdf cpu_profile.pdf %}
+  {% asset_img cpu_profile.png cpu_profile.pdf %}
 </div>
 
 ---
